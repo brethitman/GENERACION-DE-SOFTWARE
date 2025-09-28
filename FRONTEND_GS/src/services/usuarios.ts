@@ -1,5 +1,6 @@
-import api from "./api";
 import type { UsuarioPublico } from "../types/Usuario";
+
+import api from "./api";
 
 export async function listarUsuarios(): Promise<UsuarioPublico[]> {
   // Ajusta la ruta a tu backend si difiere:
