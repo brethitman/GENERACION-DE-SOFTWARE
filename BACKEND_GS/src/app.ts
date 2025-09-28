@@ -1,8 +1,9 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 import morgan from "morgan";
-import rutasAutenticacion from "./routes/autenticacion.routes";
+
 import { manejadorErrores } from "./middlewares/error.middleware";
+import rutasAutenticacion from "./routes/autenticacion.routes";
 
 const app = express();
 

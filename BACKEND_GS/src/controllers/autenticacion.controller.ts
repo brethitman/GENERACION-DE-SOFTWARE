@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+
 import { verificarUsuario } from "../repositories/autenticacion.repo";
 
 const JWT_SECRETO = process.env.JWT_SECRETO || "secreto_dev";

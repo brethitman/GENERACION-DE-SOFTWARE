@@ -1,10 +1,26 @@
 import type { Request, Response, NextFunction } from "express";
 
-export function manejadorErrores(err: any, _req: Request, res: Response, _next: NextFunction) {
+interface AppError extends Error {
+  status?: number;
+  code?: string;
+}
+
+export function manejadorErrores(
+  err: unknown,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) {
   console.error(err);
-  const estado = err?.status || 500;
+
+  // Convertimos err a AppError si tiene la forma correcta
+  const error = err as AppError;
+
+  const estado = typeof error.status === "number" ? error.status : 500;
+
   res.status(estado).json({
     ok: false,
-    mensaje: err?.message || "Error interno del servidor",
+    mensaje: error.message || "Error interno del servidor",
+    code: error.code,
   });
 }
