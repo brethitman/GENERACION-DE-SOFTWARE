@@ -1,17 +1,25 @@
 // src/test/auth-login.spec.ts
-import request from "supertest";              // ← Paquetes externos primero
-import { describe, it, expect, vi, beforeEach } from "vitest"; // ← Testing framework
-
-import app from "../app";                     // ← Imports internos (proyecto)
+import request from "supertest";              
+import { describe, it, expect, vi, beforeEach } from "vitest";
+ 
+import app from "../app";
 
 // 🧪 Mock del repositorio de autenticación
 vi.mock("../repositories/autenticacion.repo", () => {
   return {
-    loginUsuario: vi.fn(async (correo: string, contrasena: string) => {
+    verificarUsuario: vi.fn(async (correo: string, contrasena: string) => {
       if (correo === "ana@example.com" && contrasena === "123456") {
-        return { token: "FAKE_TOKEN" };
+        // 👇 Devuelve el objeto que tu controlador espera
+        return {
+          id_usuario: "1",
+          nombre_completo: "Ana",
+          correo,
+          rol: "estudiante",
+          activo: true,
+        };
       }
-      throw Object.assign(new Error("Credenciales inválidas"), { status: 401 });
+      // simulamos fallo de credenciales
+      return null;
     }),
   };
 });
@@ -32,7 +40,9 @@ describe("POST /api/v1/autenticacion/login", () => {
       .send({ correo: "ana@example.com", contrasena: "123456" });
 
     expect(res.status).toBe(200);
-    expect(res.body?.datos?.token).toBe("FAKE_TOKEN");
+    expect(res.body?.ok).toBe(true);
+    expect(res.body?.datos?.usuario?.correo).toBe("ana@example.com");
+    expect(res.body?.datos?.token).toBeDefined(); // debería generarse un JWT
   });
 
   it("401 con credenciales inválidas", async () => {
