@@ -1,64 +1,61 @@
-// src/pages/Login/Login.test.tsx
-import { screen } from "../../tests/test-utils";
-import { renderWithProviders } from "../../tests/test-utils";
-import userEvent from "@testing-library/user-event";
-import { describe, it, expect } from "vitest";
-import { vi } from "vitest";
-import type { Mock } from "vitest";
-import Login from "./Login";
-import api from "../../services/api";
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { vi, describe, test, expect, afterEach } from 'vitest'
 
-vi.mock("../../services/api", () => {
-  return {
-    default: {
-      post: vi.fn().mockResolvedValue({
-        data: {
-          datos: {
-            token: "TOKEN_FAKE",
-            usuario: { id: 1, nombre: "Usuario Demo", correo: "demo@site.com" }
-          }
-        }
-      })
-    }
-  };
-});
+vi.mock('axios', () => ({ default: { post: vi.fn() } }))
+import axios from 'axios'
+import Login from './Login'
 
-describe("<Login />", () => {
-  it("muestra campos y permite iniciar sesión", async () => {
-    renderWithProviders(<Login />);
+describe('<Login />', () => {
+  test('renderiza el título', () => {
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('heading', { name: /iniciar sesión/i })).toBeInTheDocument()
+  })
 
-    // Usamos placeholders en lugar de labelText para evitar htmlFor/id
-    const email = screen.getByPlaceholderText(/tu@correo\.com/i);
-    const pass = screen.getByPlaceholderText(/•+/i);
-    const submit = screen.getByRole("button", { name: /ingresar|iniciar sesión|login/i });
+  afterEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+  })
 
-    await userEvent.clear(email);
-    await userEvent.type(email, "demo@site.com");
-    await userEvent.clear(pass);
-    await userEvent.type(pass, "secret123");
-    await userEvent.click(submit);
+  test('muestra campos y permite iniciar sesión', async () => {
+    ;(axios.post as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      data: { token: 'TOKEN_FAKE' },
+    })
 
-    // Algún feedback de éxito que muestre tu UI (ajusta el texto si difiere)
-    // Si tu UI no muestra texto, al menos verificamos side effects:
-    expect(localStorage.getItem("token")).toBe("TOKEN_FAKE");
-  });
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    )
 
-  it("muestra error si el backend responde 401", async () => {
-    (api.post as Mock).mockRejectedValueOnce({ response: { status: 401 } });
+    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: 'a@a.com' } })
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: 'goodpass' } })
+    fireEvent.click(screen.getByRole('button', { name: /ingresar/i }))
 
-    renderWithProviders(<Login />);
+    await waitFor(() => {
+      expect(localStorage.getItem('token')).toBe('TOKEN_FAKE')
+    })
+  })
 
-    const email = screen.getByPlaceholderText(/tu@correo\.com/i);
-    const pass = screen.getByPlaceholderText(/•+/i);
-    const submit = screen.getByRole("button", { name: /ingresar|iniciar sesión|login/i });
+  test('muestra error si el backend responde 401', async () => {
+    ;(axios.post as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce({
+      response: { status: 401, data: { message: 'Credenciales inválidas' } },
+    })
 
-    await userEvent.clear(email);
-    await userEvent.type(email, "a@a.com");
-    await userEvent.clear(pass);
-    await userEvent.type(pass, "bad");
-    await userEvent.click(submit);
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    )
 
-    // Ajusta el texto de error al de tu componente
-    expect(await screen.findByText(/credenciales inválidas|error|401/i)).toBeInTheDocument();
-  });
-});
+    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: 'a@a.com' } })
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: 'bad' } })
+    fireEvent.click(screen.getByRole('button', { name: /ingresar/i }))
+
+    expect(await screen.findByText(/no se pudo iniciar sesión/i)).toBeInTheDocument()
+  })
+})
