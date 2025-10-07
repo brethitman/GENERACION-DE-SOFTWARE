@@ -9,6 +9,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  //borrar luego
   const enviar = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
