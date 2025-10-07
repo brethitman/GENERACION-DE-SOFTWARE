@@ -1,25 +1,18 @@
-// src/pages/Home.test.tsx
 import { render, screen } from '@testing-library/react'
-import { vi, type Mock } from 'vitest'
+import { vi } from 'vitest'
 
-// Mock del hook ANTES de importar el componente
-vi.mock('../hooks/useAuth', () => ({
-  useAuth: vi.fn(),
-}))
-import { useAuth } from '../../hooks/useAuth'
+// 🔧 Usa la MISMA ruta que tu Home.tsx usa para importar el hook
+vi.mock('../../hooks/useAuth', () => ({ useAuth: vi.fn() }))
+
+import * as useAuthModule from '../../hooks/useAuth'
 import Home from './Home'
 
 describe('<Home />', () => {
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
+  afterEach(() => vi.clearAllMocks())
 
   test('muestra mensaje para no autenticados', () => {
-    const mockedUseAuth = useAuth as unknown as Mock
-    mockedUseAuth.mockReturnValue({
-      estaAutenticado: false,
-      usuario: null,
-    })
+    const mockedUseAuth = useAuthModule.useAuth as unknown as ReturnType<typeof vi.fn>
+    mockedUseAuth.mockReturnValue({ estaAutenticado: false, usuario: null })
 
     render(<Home />)
 
@@ -30,7 +23,7 @@ describe('<Home />', () => {
   })
 
   test('muestra perfil y tarjetas cuando está autenticado', () => {
-    const mockedUseAuth = useAuth as unknown as Mock
+    const mockedUseAuth = useAuthModule.useAuth as unknown as ReturnType<typeof vi.fn>
     mockedUseAuth.mockReturnValue({
       estaAutenticado: true,
       usuario: { nombre: 'María Pérez', rol: 'docente' },
