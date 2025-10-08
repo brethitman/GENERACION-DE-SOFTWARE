@@ -1,41 +1,43 @@
-import axios from "axios";               // ✅ 1. Librerías externas primero
-import { useState } from "react";        // ✅ 2. React después
-import { useNavigate } from "react-router-dom"; // ✅ 3. Otros módulos externos
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../../hooks/useAuth";
+import { rutaPorRol } from "../../utils/rutaPorRol"; // 👈 la volvemos a usar
 
 export default function Login() {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [cargando, setCargando] = useState(false);
 
-  //borrar luego
-  const enviar = async (e: React.FormEvent) => {
+  const navigate = useNavigate();
+  const { iniciarSesion } = useAuth();
+
+  const enviar = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setCargando(true);
     try {
-      const { data } = await axios.post("/auth/login", { correo, contrasena });
-      // el test mockea data.token
-      localStorage.setItem("token", data.token);
-      navigate("/");
-    } catch {
-      setError("No se pudo iniciar sesión");
+      const usuario = await iniciarSesion({ correo, contrasena });
+      navigate(rutaPorRol(usuario.rol), { replace: true }); // ✅ ahora sí lo usamos
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "No se pudo iniciar sesión";
+      setError(msg);
+    } finally {
+      setCargando(false);
     }
   };
 
   return (
     <section className="max-w-sm mx-auto bg-white rounded-xl border p-6 shadow-sm">
-      <h1 className="text-xl font-semibold mb-4">Iniciar sesión</h1>
-
+      <h1 className="text-xl font-semibold mb-4 text-center">Iniciar sesión</h1>
       <form className="space-y-4" onSubmit={enviar}>
         <div>
-          {/* 🔗 Asociación accesible */}
-          <label htmlFor="email" className="block text-sm mb-1">
-            Correo
+          <label htmlFor="email" className="block text-sm mb-1 font-medium">
+            Correo electrónico
           </label>
           <input
             id="email"
-            name="email"
             type="email"
             required
             placeholder="tu@correo.com"
@@ -46,13 +48,11 @@ export default function Login() {
         </div>
 
         <div>
-          {/* 🔗 Asociación accesible */}
-          <label htmlFor="password" className="block text-sm mb-1">
+          <label htmlFor="password" className="block text-sm mb-1 font-medium">
             Contraseña
           </label>
           <input
             id="password"
-            name="password"
             type="password"
             required
             placeholder="••••••••"
@@ -62,15 +62,16 @@ export default function Login() {
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-600 bg-red-50 rounded-md p-2">{error}</p>
+        )}
 
         <button
           type="submit"
-          className="w-full rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
+          className="w-full rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60 transition-all"
           disabled={cargando}
-          className="w-full rounded-lg px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60"
         >
-          Ingresar
+          {cargando ? "Ingresando..." : "Ingresar"}
         </button>
       </form>
     </section>
