@@ -2,9 +2,9 @@ import { Route, Routes } from "react-router-dom";
 
 import RutaPrivada from "./components/RutaPrivada/RutaPrivada";
 import MainLayout from "./layouts/MainLayout";
+import Home from "./pages/Home";
 import Login from "./pages/Login/Login";
 import Users from "./pages/Users/Users";
-import Home from "./pages/home/Home";
 
 export default function App() {
   return (
