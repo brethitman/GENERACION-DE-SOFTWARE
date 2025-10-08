@@ -1,11 +1,25 @@
-import { useAuth } from "../../hooks/useAuth";
+// src/pages/Home/Home.tsx
+import { useAuth } from "../../context/auth-context"; // o tu ruta real del hook
 
 export default function Home() {
-  const { estaAutenticado, usuario } = useAuth();
+  const { cargandoAuth, estaAutenticado, usuario } = useAuth();
+
+  if (cargandoAuth) {
+    return (
+      <section className="space-y-6">
+        <header className="rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 p-6 text-white shadow">
+          <h1 className="text-2xl font-semibold">Inicio</h1>
+          <p className="text-sm opacity-90 mt-1">Cargando…</p>
+        </header>
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm text-center">
+          <div className="animate-pulse h-5 bg-gray-200 rounded w-1/3 mx-auto" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="space-y-6">
-      {/* Cabecera */}
       <header className="rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 p-6 text-white shadow">
         <h1 className="text-2xl font-semibold">Inicio</h1>
         <p className="text-sm opacity-90 mt-1">
@@ -17,7 +31,6 @@ export default function Home() {
 
       {estaAutenticado ? (
         <>
-          {/* Perfil */}
           <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white text-lg font-semibold">
               {usuario?.nombre?.[0] ?? "U"}
@@ -30,7 +43,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Contenido informativo */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
               <h3 className="font-semibold text-gray-900">Resumen general</h3>
@@ -55,7 +67,6 @@ export default function Home() {
           </div>
         </>
       ) : (
-        // No autenticado
         <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm text-center">
           <h2 className="text-lg font-semibold text-gray-900">
             Bienvenido a la plataforma

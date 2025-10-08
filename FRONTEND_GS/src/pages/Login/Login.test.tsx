@@ -1,61 +1,79 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import { vi, describe, test, expect, afterEach } from 'vitest'
+// src/pages/Login/Login.test.tsx
 
-vi.mock('axios', () => ({ default: { post: vi.fn() } }))
-import axios from 'axios'
-import Login from './Login'
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
-describe('<Login />', () => {
-  test('renderiza el título', () => {
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    )
-    expect(screen.getByRole('heading', { name: /iniciar sesión/i })).toBeInTheDocument()
-  })
+import { renderWithAuth } from "../../test-utils/renderWithAuth";
+import type { Credenciales } from "../../context/auth-context";
+import type { UsuarioPublico } from "../../types/Usuario";
+import Login from "./Login";
 
+const USUARIO_FAKE: UsuarioPublico = {
+  id: 1,
+  nombre: "Ana",
+  correo: "ana@a.com",
+  rol: "estudiante",
+};
+
+describe("<Login />", () => {
   afterEach(() => {
-    vi.clearAllMocks()
-    localStorage.clear()
-  })
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
 
-  test('muestra campos y permite iniciar sesión', async () => {
-    ;(axios.post as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      data: { token: 'TOKEN_FAKE' },
-    })
+  test("renderiza el título", () => {
+    renderWithAuth(<Login />, { ctx: { cargandoAuth: false } });
+    expect(screen.getByRole("heading", { name: /iniciar sesión/i })).toBeInTheDocument();
+  });
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    )
+  test("muestra campos y permite iniciar sesión", async () => {
+    // Mock: iniciarSesion recibe credenciales y devuelve el usuario
+    const iniciarSesionMock = vi
+      .fn<(cred: Credenciales) => Promise<UsuarioPublico>>()
+      .mockResolvedValue(USUARIO_FAKE);
 
-    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: 'a@a.com' } })
-    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: 'goodpass' } })
-    fireEvent.click(screen.getByRole('button', { name: /ingresar/i }))
+    renderWithAuth(<Login />, {
+      ctx: {
+        iniciarSesion: iniciarSesionMock,
+        cargandoAuth: false,
+      },
+      route: "/login",
+    });
+
+    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: "a@a.com" } });
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: "goodpass" } });
+
+    fireEvent.submit(screen.getByRole("button", { name: /ingresar/i }));
 
     await waitFor(() => {
-      expect(localStorage.getItem('token')).toBe('TOKEN_FAKE')
-    })
-  })
+      expect(iniciarSesionMock).toHaveBeenCalledWith({
+        correo: "a@a.com",
+        contrasena: "goodpass",
+      });
+    });
+  });
 
-  test('muestra error si el backend responde 401', async () => {
-    ;(axios.post as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce({
-      response: { status: 401, data: { message: 'Credenciales inválidas' } },
-    })
+  test("muestra error si el backend responde 401", async () => {
+    // Mock: iniciarSesion rechaza con Error
+    const iniciarSesionMock = vi
+      .fn<(cred: Credenciales) => Promise<UsuarioPublico>>()
+      .mockRejectedValue(new Error("No se pudo iniciar sesión"));
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    )
+    renderWithAuth(<Login />, {
+      ctx: {
+        iniciarSesion: iniciarSesionMock,
+        cargandoAuth: false,
+      },
+      route: "/login",
+    });
 
-    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: 'a@a.com' } })
-    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: 'bad' } })
-    fireEvent.click(screen.getByRole('button', { name: /ingresar/i }))
+    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: "a@a.com" } });
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: "bad" } });
 
-    expect(await screen.findByText(/no se pudo iniciar sesión/i)).toBeInTheDocument()
-  })
-})
+    fireEvent.submit(screen.getByRole("button", { name: /ingresar/i }));
+
+    expect(
+      await screen.findByText(/no se pudo iniciar sesión/i)
+    ).toBeInTheDocument();
+  });
+});
