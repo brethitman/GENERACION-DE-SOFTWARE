@@ -8,7 +8,7 @@ export default function Header() {
   const { estaAutenticado, usuario, cerrarSesion } = useAuth();
 
   return (
-    <header className="w-full bg-white/70 backdrop-blur sticky top-0 z-10 border border-neutral-400 p-1 shadow-md">
+    <header className="w-full bg-white/70 backdrop-blur sticky top-0 z-10 border border-neutral-400 p-0 shadow-md">
       <div className="container flex items-center justify-between px-6 py-2">
         
         <div className="flex items-center space-x-0">
