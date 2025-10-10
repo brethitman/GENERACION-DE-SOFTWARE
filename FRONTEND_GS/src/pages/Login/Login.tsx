@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {CiMail, CiLock} from 'react-icons/ci';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {FcGoogle} from 'react-icons/fc';
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
 import { rutaPorRol } from "../../utils/rutaPorRol"; // 👈 la volvemos a usar
-
 
 
 export default function Login() {
@@ -34,7 +34,7 @@ export default function Login() {
   };
 
   return (
-    <section className="max-w-sm mx-auto bg-white rounded-2xl border border-neutral-400 p-8 shadow-xl">
+    <section className="max-w-md mx-auto bg-white rounded-2xl border border-neutral-400 p-8 shadow-xl">
       <h1 className="text-l text-stone-800 font-bold mb-0 text-center">Bienvenido al Club</h1>
       <h1 className="text-xl text-[#7E3132] font-bold mb-3 text-center">INICIAR SESIÓN</h1>
       <form className="space-y-4" onSubmit={enviar}>
@@ -90,12 +90,34 @@ export default function Login() {
           {cargando ? "Ingresando..." : "Ingresar"}
         </button>
         </div>
-<p className="text-sm text-gray-600 text-center mt-4">
-  ¿No tienes una cuenta?{" "}
-  <a href="#" className="font-semibold text-[#7E3132] hover:text-[#712C2D] hover:underline">
-    Regístrate
-  </a>
-</p>
+
+        <div className="flex items-center w-full my-4">
+           <div className="flex-grow border-t border-stone-400"></div>
+               <span className="mx-2 text-stone-500">o</span>
+           <div className="flex-grow border-t border-stone-400"></div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-2">
+            <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all">
+            <FcGoogle className="w-6 h-6 ml-1"/>
+            <span className="ml-2">Continuar con Google</span>
+           </button>
+           <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 ml-1" fill="none" viewBox="0 0 48 48" strokeWidth="2">
+                <path fill="#ff5722" d="M6 6H22V22H6z" transform="rotate(-180 14 14)"></path>
+                <path fill="#4caf50" d="M26 6H42V22H26z" transform="rotate(-180 34 14)"></path>
+                <path fill="#ffc107" d="M26 26H42V42H26z" transform="rotate(-180 34 34)"></path>
+                <path fill="#03a9f4" d="M6 26H22V42H6z" transform="rotate(-180 14 34)"></path>
+            </svg>
+            <span className="ml-2">Continuar con Microsoft</span>
+           </button>
+        </div>
+    <p className="text-sm text-gray-600 text-center mt-4">
+     ¿No tienes una cuenta?{" "}
+       <a href="#" className="font-semibold text-[#7E3132] hover:text-[#712C2D] hover:underline">
+      Regístrate
+       </a>
+    </p>
       </form>
     </section>
   );
