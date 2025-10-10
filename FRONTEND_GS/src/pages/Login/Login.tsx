@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { BotonGoogle } from "../../components/BotonGoogle/BotonGoogle";
 import { useAuth } from "../../hooks/useAuth";
-import { rutaPorRol } from "../../utils/rutaPorRol"; // 👈 la volvemos a usar
+import { rutaPorRol } from "../../utils/rutaPorRol";
 
 export default function Login() {
   const [correo, setCorreo] = useState("");
@@ -19,7 +20,7 @@ export default function Login() {
     setCargando(true);
     try {
       const usuario = await iniciarSesion({ correo, contrasena });
-      navigate(rutaPorRol(usuario.rol), { replace: true }); // ✅ ahora sí lo usamos
+      navigate(rutaPorRol(usuario.rol), { replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "No se pudo iniciar sesión";
       setError(msg);
@@ -30,7 +31,8 @@ export default function Login() {
 
   return (
     <section className="max-w-sm mx-auto bg-white rounded-xl border p-6 shadow-sm">
-      <h1 className="text-xl font-semibold mb-4 text-center">Iniciar sesión</h1>
+      <h1 className="text-xl font-semibold mb-6 text-center">Iniciar sesión</h1>
+
       <form className="space-y-4" onSubmit={enviar}>
         <div>
           <label htmlFor="email" className="block text-sm mb-1 font-medium">
@@ -74,6 +76,16 @@ export default function Login() {
           {cargando ? "Ingresando..." : "Ingresar"}
         </button>
       </form>
+
+      {/* Separador */}
+      <div className="flex items-center my-4">
+        <hr className="flex-grow border-gray-300" />
+        <span className="mx-2 text-gray-400 text-sm">o</span>
+        <hr className="flex-grow border-gray-300" />
+      </div>
+
+      {/* Botón Google realista */}
+      <BotonGoogle />
     </section>
   );
 }
