@@ -11,8 +11,6 @@ describe("Registro /", () => {
       </MemoryRouter>
     );
 
-
-
   test("renderiza los botones a otros registros", () => {
     renderWithRouter();
     expect(screen.getByText("Registrarse con Google")).toBeInTheDocument();
@@ -30,11 +28,8 @@ describe("Registro /", () => {
     renderWithRouter();
     const passwordFields = screen.getAllByPlaceholderText(/contraseña/i);
     const toggleButtons = screen.getAllByRole("button", { hidden: true });
-    // estado inicial: tipo = password
     expect(passwordFields[0]).toHaveAttribute("type", "password");
-    // clic en el botón de mostrar/ocultar
     fireEvent.click(toggleButtons[0]);
-    // ahora debe ser de tipo text
     expect(passwordFields[0]).toHaveAttribute("type", "text");
   });
 });
