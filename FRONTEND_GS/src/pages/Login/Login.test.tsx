@@ -1,64 +1,79 @@
 // src/pages/Login/Login.test.tsx
-import { screen } from "../../tests/test-utils";
-import { renderWithProviders } from "../../tests/test-utils";
-import userEvent from "@testing-library/user-event";
-import { describe, it, expect } from "vitest";
-import { vi } from "vitest";
-import type { Mock } from "vitest";
-import Login from "./Login";
-import api from "../../services/api";
 
-vi.mock("../../services/api", () => {
-  return {
-    default: {
-      post: vi.fn().mockResolvedValue({
-        data: {
-          datos: {
-            token: "TOKEN_FAKE",
-            usuario: { id: 1, nombre: "Usuario Demo", correo: "demo@site.com" }
-          }
-        }
-      })
-    }
-  };
-});
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+import { renderWithAuth } from "../../test-utils/renderWithAuth";
+import type { Credenciales } from "../../context/auth-context";
+import type { UsuarioPublico } from "../../types/Usuario";
+import Login from "./Login";
+
+const USUARIO_FAKE: UsuarioPublico = {
+  id: 1,
+  nombre: "Ana",
+  correo: "ana@a.com",
+  rol: "estudiante",
+};
 
 describe("<Login />", () => {
-  it("muestra campos y permite iniciar sesión", async () => {
-    renderWithProviders(<Login />);
-
-    // Usamos placeholders en lugar de labelText para evitar htmlFor/id
-    const email = screen.getByPlaceholderText(/tu@correo\.com/i);
-    const pass = screen.getByPlaceholderText(/•+/i);
-    const submit = screen.getByRole("button", { name: /ingresar|iniciar sesión|login/i });
-
-    await userEvent.clear(email);
-    await userEvent.type(email, "demo@site.com");
-    await userEvent.clear(pass);
-    await userEvent.type(pass, "secret123");
-    await userEvent.click(submit);
-
-    // Algún feedback de éxito que muestre tu UI (ajusta el texto si difiere)
-    // Si tu UI no muestra texto, al menos verificamos side effects:
-    expect(localStorage.getItem("token")).toBe("TOKEN_FAKE");
+  afterEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
   });
 
-  it("muestra error si el backend responde 401", async () => {
-    (api.post as Mock).mockRejectedValueOnce({ response: { status: 401 } });
+  test("renderiza el título", () => {
+    renderWithAuth(<Login />, { ctx: { cargandoAuth: false } });
+    expect(screen.getByRole("heading", { name: /iniciar sesión/i })).toBeInTheDocument();
+  });
 
-    renderWithProviders(<Login />);
+  test("muestra campos y permite iniciar sesión", async () => {
+    // Mock: iniciarSesion recibe credenciales y devuelve el usuario
+    const iniciarSesionMock = vi
+      .fn<(cred: Credenciales) => Promise<UsuarioPublico>>()
+      .mockResolvedValue(USUARIO_FAKE);
 
-    const email = screen.getByPlaceholderText(/tu@correo\.com/i);
-    const pass = screen.getByPlaceholderText(/•+/i);
-    const submit = screen.getByRole("button", { name: /ingresar|iniciar sesión|login/i });
+    renderWithAuth(<Login />, {
+      ctx: {
+        iniciarSesion: iniciarSesionMock,
+        cargandoAuth: false,
+      },
+      route: "/login",
+    });
 
-    await userEvent.clear(email);
-    await userEvent.type(email, "a@a.com");
-    await userEvent.clear(pass);
-    await userEvent.type(pass, "bad");
-    await userEvent.click(submit);
+    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: "a@a.com" } });
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: "goodpass" } });
 
-    // Ajusta el texto de error al de tu componente
-    expect(await screen.findByText(/credenciales inválidas|error|401/i)).toBeInTheDocument();
+    fireEvent.submit(screen.getByRole("button", { name: /ingresar/i }));
+
+    await waitFor(() => {
+      expect(iniciarSesionMock).toHaveBeenCalledWith({
+        correo: "a@a.com",
+        contrasena: "goodpass",
+      });
+    });
+  });
+
+  test("muestra error si el backend responde 401", async () => {
+    // Mock: iniciarSesion rechaza con Error
+    const iniciarSesionMock = vi
+      .fn<(cred: Credenciales) => Promise<UsuarioPublico>>()
+      .mockRejectedValue(new Error("No se pudo iniciar sesión"));
+
+    renderWithAuth(<Login />, {
+      ctx: {
+        iniciarSesion: iniciarSesionMock,
+        cargandoAuth: false,
+      },
+      route: "/login",
+    });
+
+    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: "a@a.com" } });
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: "bad" } });
+
+    fireEvent.submit(screen.getByRole("button", { name: /ingresar/i }));
+
+    expect(
+      await screen.findByText(/no se pudo iniciar sesión/i)
+    ).toBeInTheDocument();
   });
 });

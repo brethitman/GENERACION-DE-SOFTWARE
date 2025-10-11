@@ -1,27 +1,28 @@
-// src/pages/Users/Users.test.tsx
-import { renderWithProviders, screen } from "../../tests/test-utils";
-import { describe, it, expect } from "vitest";
-import { vi } from "vitest";
-import Users from "./Users";
+import { render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 
-vi.mock("../../services/api", () => ({
-  default: {
-    get: vi.fn().mockResolvedValue({
-      data: [
-        { id: 1, nombre: "Ana", correo: "ana@demo.com", rol: "estudiante" },
-        { id: 2, nombre: "Luis", correo: "luis@demo.com", rol: "tutor" }
-      ]
+// 👇 Mockea el cliente API que usa tu Users.tsx
+vi.mock('../../services/api', () => ({
+  default: { get: vi.fn() },
+}))
+import api from '../../services/api'
+import Users from './Users'
+
+describe('<Users />', () => {
+  afterEach(() => vi.clearAllMocks())
+
+  test('carga y muestra usuarios', async () => {
+    ;(api.get as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      // Ajusta al shape que use tu Users.tsx:
+      // si hace: const { data } = await api.get(...); y data es un array
+      data: [{ id: 1, nombre: 'Ana' }, { id: 2, nombre: 'Luis' }],
+      // si fuera data.users: { data: { users: [...] } }
     })
-  }
-}));
 
-describe("<Users />", () => {
-  it("carga y muestra usuarios", async () => {
-    renderWithProviders(<Users />);
+    render(<Users />)
 
-    expect(screen.getByText(/cargando/i)).toBeInTheDocument();
-
-    expect(await screen.findByText("Ana")).toBeInTheDocument();
-    expect(screen.getByText("Luis")).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText(/cargando/i)).toBeInTheDocument()
+    expect(await screen.findByText('Ana')).toBeInTheDocument()
+    expect(screen.getByText('Luis')).toBeInTheDocument()
+  })
+})
