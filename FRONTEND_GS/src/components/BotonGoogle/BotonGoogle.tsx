@@ -7,7 +7,7 @@ export const BotonGoogle: React.FC = () => {
       className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 hover:shadow-md hover:bg-gray-50 transition-all"
     >
       <img
-        src="/google-logo.png" // Coloca tu logo de Google en /public
+        src="/google-logo.png"
         alt="Google logo"
         className="w-5 h-5"
       />

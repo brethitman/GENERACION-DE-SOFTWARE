@@ -1,4 +1,4 @@
-import type { UsuarioPublico } from "../types/Usuario";
+import type { UsuarioPublico } from "../utils/types/Usuario";
 
 import api from "./api";
 

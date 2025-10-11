@@ -6,9 +6,9 @@ import { Route, Routes } from "react-router-dom";
 // ===== Internal =====
 import RutaPrivada from "./components/RutaPrivada/RutaPrivada";
 import MainLayout from "./layouts/MainLayout";
-import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Users from "./pages/Users/Users";
+import Home from "./pages/home/Home";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
 
 
