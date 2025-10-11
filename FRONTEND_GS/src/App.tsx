@@ -10,6 +10,7 @@ import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
 import Home from "./pages/home/Home";
+import PanelAdmin from "./pages/panels/PanelAdmin";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
 
 
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/panel/admi" element={<PanelAdmin />} />
 
         {/* Privado */}
         <Route
