@@ -18,7 +18,7 @@ export default function MainLayout() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-white text-gray-900">
+    <div className="min-h-dvh flex flex-col bg-[#F3F3F3] text-gray-900">
       <Header />
       <main className="flex-1 w-full px-4 py-6">
         <Outlet />
