@@ -49,12 +49,13 @@ export default function Login() {
         <form onSubmit={enviar} className="space-y-4 text-left">
           {/* Campo correo */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="correo" className="block text-sm font-semibold text-gray-700 mb-1">
               <span className="flex items-center gap-2">
                 <IconoCorreo /> Correo Electrónico
               </span>
             </label>
             <input
+              id="correo"
               type="email"
               required
               placeholder="Ingrese su correo..."
@@ -66,12 +67,13 @@ export default function Login() {
 
           {/* Campo contraseña */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="contrasena" className="block text-sm font-semibold text-gray-700 mb-1">
               <span className="flex items-center gap-2">
                 <IconoContrasena /> Contraseña
               </span>
             </label>
             <input
+              id="contrasena"
               type="password"
               required
               placeholder="Ingrese su contraseña..."
