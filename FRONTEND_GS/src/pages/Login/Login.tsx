@@ -35,10 +35,10 @@ export default function Login() {
   };
 
   return (
-    <section className="max-w-md mx-auto bg-white rounded-2xl border border-neutral-400 p-8 shadow-xl">
+    <section className="max-w-md mx-auto bg-white rounded-2xl border border-neutral-400 p-12 shadow-xl">
       <h1 className="text-l text-stone-800 font-bold mb-0 text-center">Bienvenido al Club</h1>
       <h1 className="text-xl text-[#7E3132] font-bold mb-3 text-center">INICIAR SESIÓN</h1>
-      <form className="space-y-4" onSubmit={enviar}>
+      <form className="space-y-3" onSubmit={enviar}>
         <div>
           <label htmlFor="email" className="flex items-center space-x-2 mb-1">
               <CiMail className="w-6 h-6 text-[#7E3132]"/>

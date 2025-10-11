@@ -10,10 +10,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <section className="max-w-md mx-auto bg-white rounded-2xl border border-neutral-400 p-8 shadow-xl">
+    <section className="max-w-md mx-auto bg-white rounded-2xl border border-neutral-400 p-12 shadow-xl">
       <h1 className="text-l text-stone-800 font-bold mb-0 text-center">Unete al Club</h1>
       <h1 className="text-xl text-[#7E3132] font-bold mb-3 text-center">REGÍSTRATE</h1>
-      <form className="space-y-4">
+      <form className="space-y-3">
         <div>
           <label htmlFor="name" className="flex items-center space-x-2 mb-1">
               <CiUser className="w-6 h-6 text-[#7E3132]"/>
