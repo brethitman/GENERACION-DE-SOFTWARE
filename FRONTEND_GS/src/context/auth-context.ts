@@ -1,7 +1,7 @@
 // src/context/auth-context.ts
 import { createContext, useContext } from "react";
 
-import type { UsuarioPublico } from "../types/Usuario";
+import type { UsuarioPublico } from "../utils/types/Usuario";
 
 export type Credenciales = { correo: string; contrasena: string };
 

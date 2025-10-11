@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 import api from "../../services/api";
-import type { UsuarioPublico } from "../../types/Usuario";
+import type { UsuarioPublico } from "../../utils/types/Usuario";
 
 
 export default function Users() {

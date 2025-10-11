@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { renderWithAuth } from "../../test-utils/renderWithAuth";
 import type { Credenciales } from "../../context/auth-context";
-import type { UsuarioPublico } from "../../types/Usuario";
+import type { UsuarioPublico } from "../../utils/types/Usuario";
 import Login from "./Login";
 
 const USUARIO_FAKE: UsuarioPublico = {
