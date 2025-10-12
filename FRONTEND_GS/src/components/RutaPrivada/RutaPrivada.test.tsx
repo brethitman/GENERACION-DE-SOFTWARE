@@ -1,40 +1,33 @@
-// src/components/RutaPrivada/RutaPrivada.test.tsx
-import { renderWithProviders, screen } from "../../tests/test-utils";
-import { describe, it, expect } from "vitest";
-import { vi } from "vitest";
-import type { Mock } from "vitest";
+import { screen } from "@testing-library/react";
+import { Route, Routes } from "react-router-dom";
 
-// 1) Mock del hook ANTES de importar el componente
-vi.mock("../../hooks/useAuth", () => ({
-  useAuth: vi.fn()
-}));
-
-// 2) Ahora importamos el hook mockeado y luego el componente
-import { useAuth } from "../../hooks/useAuth";
 import RutaPrivada from "./RutaPrivada";
+import { renderWithAuth } from "../../test-utils/renderWithAuth";
+
+function AppMock() {
+  return (
+    <Routes>
+      <Route
+        path="/privado"
+        element={
+          <RutaPrivada>
+            <div>Contenido protegido</div>
+          </RutaPrivada>
+        }
+      />
+      <Route path="/login" element={<div>Login</div>} />
+    </Routes>
+  );
+}
 
 describe("<RutaPrivada />", () => {
-  it("si NO está autenticado, redirige al /login (no muestra el contenido)", () => {
-    (useAuth as unknown as Mock).mockReturnValue({ estaAutenticado: false });
-
-    renderWithProviders(
-      <RutaPrivada>
-        <div>Secreto</div>
-      </RutaPrivada>
-    );
-
-    expect(screen.queryByText(/Secreto/)).not.toBeInTheDocument();
+  test("redirige a /login si no autenticado", () => {
+    renderWithAuth(<AppMock />, { ctx: { estaAutenticado: false, cargandoAuth: false }, route: "/privado" });
+    expect(screen.getByText(/login/i)).toBeInTheDocument();
   });
 
-  it("si está autenticado, muestra el contenido protegido", () => {
-    (useAuth as unknown as Mock).mockReturnValue({ estaAutenticado: true });
-
-    renderWithProviders(
-      <RutaPrivada>
-        <div>Secreto</div>
-      </RutaPrivada>
-    );
-
-    expect(screen.getByText(/Secreto/)).toBeInTheDocument();
+  test("muestra contenido protegido si autenticado", () => {
+    renderWithAuth(<AppMock />, { ctx: { estaAutenticado: true, cargandoAuth: false }, route: "/privado" });
+    expect(screen.getByText(/contenido protegido/i)).toBeInTheDocument();
   });
 });

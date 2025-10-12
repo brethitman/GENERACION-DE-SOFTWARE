@@ -55,6 +55,12 @@ export default [
     },
   },
 
+  {
+    ignores: ["postcss.config.js"], // Aquí ignoras el archivo
+    // ...otras configuraciones
+  },
+  
+
   // Desactiva choques con Prettier (formato lo hace Prettier)
   eslintConfigPrettier,
 ];

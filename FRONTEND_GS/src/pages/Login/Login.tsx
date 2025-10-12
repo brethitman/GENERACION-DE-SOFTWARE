@@ -2,28 +2,27 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
+import { rutaPorRol } from "../../utils/rutaPorRol"; // 👈 la volvemos a usar
 
 export default function Login() {
-  const [correo, setCorreo] = useState("ana.jaldin@gmail.com");
-  const [contrasena, setContrasena] = useState("Ana#2025");
-  const [cargando, setCargando] = useState(false);
+  const [correo, setCorreo] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { iniciarSesion } = useAuth();
-  const navigate = useNavigate();
+  const [cargando, setCargando] = useState(false);
 
-  const enviar = async (e: React.FormEvent) => {
+  const navigate = useNavigate();
+  const { iniciarSesion } = useAuth();
+
+  const enviar = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setCargando(true);
     try {
-      await iniciarSesion({ correo, contrasena });
-      navigate("/");
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        setError(e.message ?? "Error al iniciar sesión");
-      } else {
-        setError("Error al iniciar sesión");
-      }
+      const usuario = await iniciarSesion({ correo, contrasena });
+      navigate(rutaPorRol(usuario.rol), { replace: true }); // ✅ ahora sí lo usamos
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "No se pudo iniciar sesión";
+      setError(msg);
     } finally {
       setCargando(false);
     }
@@ -31,38 +30,46 @@ export default function Login() {
 
   return (
     <section className="max-w-sm mx-auto bg-white rounded-xl border p-6 shadow-sm">
-      <h1 className="text-xl font-semibold mb-4">Iniciar sesión</h1>
-
-      <form onSubmit={enviar} className="space-y-4">
+      <h1 className="text-xl font-semibold mb-4 text-center">Iniciar sesión</h1>
+      <form className="space-y-4" onSubmit={enviar}>
         <div>
-          <label className="block text-sm mb-1">Correo</label>
+          <label htmlFor="email" className="block text-sm mb-1 font-medium">
+            Correo electrónico
+          </label>
           <input
-            className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            id="email"
             type="email"
+            required
+            placeholder="tu@correo.com"
+            className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
             value={correo}
             onChange={(e) => setCorreo(e.target.value)}
-            placeholder="tu@correo.com"
-            required
           />
         </div>
 
         <div>
-          <label className="block text-sm mb-1">Contraseña</label>
+          <label htmlFor="password" className="block text-sm mb-1 font-medium">
+            Contraseña
+          </label>
           <input
-            className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            id="password"
             type="password"
+            required
+            placeholder="••••••••"
+            className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
             value={contrasena}
             onChange={(e) => setContrasena(e.target.value)}
-            placeholder="••••••••"
-            required
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-600 bg-red-50 rounded-md p-2">{error}</p>
+        )}
 
         <button
+          type="submit"
+          className="w-full rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60 transition-all"
           disabled={cargando}
-          className="w-full rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
         >
           {cargando ? "Ingresando..." : "Ingresar"}
         </button>

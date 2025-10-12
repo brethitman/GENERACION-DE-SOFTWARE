@@ -1,3 +1,4 @@
+// src/context/auth-context.ts
 import { createContext, useContext } from "react";
 
 import type { UsuarioPublico } from "../types/Usuario";
@@ -13,7 +14,8 @@ export type Ctx = {
   usuario: UsuarioPublico | null;
   token: string | null;
   estaAutenticado: boolean;
-  iniciarSesion: (cred: Credenciales) => Promise<void>;
+  cargandoAuth: boolean;
+  iniciarSesion: (cred: Credenciales) => Promise<UsuarioPublico>; // 👈 cambia aquí
   cerrarSesion: () => void;
 };
 
@@ -21,7 +23,8 @@ export const AuthContext = createContext<Ctx>({
   usuario: null,
   token: null,
   estaAutenticado: false,
-  iniciarSesion: async () => {},
+  cargandoAuth: true,
+  iniciarSesion: async () => Promise.resolve({} as UsuarioPublico), // 👈 placeholder tipado
   cerrarSesion: () => {},
 });
 
