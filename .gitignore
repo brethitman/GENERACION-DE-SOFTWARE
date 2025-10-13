@@ -1,0 +1,16 @@
+.env
+*.env
+.env.*
+env.txt
+.env
+*.env
+.env.*
+env.txt
+.env
+*.env
+.env.*
+BACKEND_GS/secreto_gui*
+.env
+*.env
+.env.*
+BACKEND_GS/.env
