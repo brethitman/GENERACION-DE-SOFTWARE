@@ -1,3 +1,4 @@
+//usuarios.repo.ts
 import { pool } from "../infrastructure/db";
 
 export type Rol = "docente" | "estudiante" | "administrador";

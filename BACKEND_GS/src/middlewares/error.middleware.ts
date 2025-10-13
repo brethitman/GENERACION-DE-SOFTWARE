@@ -1,3 +1,4 @@
+//error.middleware.ts
 import type { Request, Response, NextFunction } from "express";
 
 interface AppError extends Error {
