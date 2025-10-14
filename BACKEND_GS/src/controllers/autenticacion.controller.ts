@@ -1,38 +1,63 @@
+// src/controllers/autenticacion.controller.ts
 import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
 
 import { verificarUsuario } from "../repositories/autenticacion.repo";
 
-const JWT_SECRETO = process.env.JWT_SECRETO || "secreto_dev";
+// Tipamos el secreto como Secret de jsonwebtoken
+const JWT_SECRETO: Secret = (process.env.JWT_SECRETO ?? "secreto_dev") as Secret;
 
-export async function iniciarSesion(req: Request, res: Response, next: NextFunction) {
+// Con exactOptionalPropertyTypes: true, nos aseguramos de que NUNCA sea undefined
+type ExpiresIn = NonNullable<SignOptions["expiresIn"]>;
+const JWT_EXPIRES: ExpiresIn = ((process.env.JWT_EXPIRES as ExpiresIn) ?? "8h") as ExpiresIn;
+
+/**
+ * POST /api/v1/autenticacion/login
+ * Body: { correo: string, contrasena: string }
+ */
+export async function iniciarSesion(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { correo, contrasena } = req.body as { correo?: string; contrasena?: string };
+    const correo = (req.body?.correo ?? "").trim();
+    const contrasena = req.body?.contrasena ?? "";
 
     if (!correo || !contrasena) {
-      return res.status(400).json({ ok: false, mensaje: "Faltan el correo o la contraseña." });
+      return res
+        .status(400)
+        .json({ ok: false, mensaje: "Faltan el correo o la contraseña." });
     }
 
+    // Debe usar bcrypt.compare dentro del repo y devolver null si no coincide
     const usuario = await verificarUsuario(correo, contrasena);
+
     if (!usuario) {
-      return res.status(401).json({ ok: false, mensaje: "Credenciales inválidas." });
+      return res
+        .status(401)
+        .json({ ok: false, mensaje: "Credenciales inválidas." });
     }
-    if (!usuario.activo) {
+
+    if (usuario.activo === false) {
       return res.status(403).json({ ok: false, mensaje: "Usuario inactivo." });
     }
 
-    const token = jwt.sign(
-      { sub: usuario.id_usuario, rol: usuario.rol, correo: usuario.correo },
-      JWT_SECRETO,
-      { expiresIn: "8h" }
-    );
+    const payload = {
+      sub: String(usuario.id_usuario),
+      rol: usuario.rol,
+      correo: usuario.correo,
+    };
 
-    return res.json({
+    // Usamos default import para evitar conflictos de overloads
+    const token = jwt.sign(payload, JWT_SECRETO, { expiresIn: JWT_EXPIRES });
+
+    return res.status(200).json({
       ok: true,
       mensaje: "Inicio de sesión exitoso",
       datos: {
         usuario: {
-          id: usuario.id_usuario,
+          id: String(usuario.id_usuario),
           nombre: usuario.nombre_completo,
           correo: usuario.correo,
           rol: usuario.rol,
@@ -40,7 +65,7 @@ export async function iniciarSesion(req: Request, res: Response, next: NextFunct
         token,
       },
     });
-  } catch (err) {
-    next(err);
+  } catch (err: unknown) {
+    return next(err);
   }
 }

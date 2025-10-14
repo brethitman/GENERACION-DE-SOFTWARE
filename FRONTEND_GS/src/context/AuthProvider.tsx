@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 
 // ===== Internal =====
 import api, { setAuthToken } from "../services/api";
-import type { UsuarioPublico } from "../utils/types/Usuario";
+import type { UsuarioPublico } from "../types/Usuario";
 
 import {
   AuthContext,

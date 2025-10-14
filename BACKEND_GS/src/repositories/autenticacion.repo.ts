@@ -1,3 +1,6 @@
+// src/repositories/autenticacion.repo.ts
+import bcrypt from "bcryptjs";
+
 import { ejecutarFilas } from "../infrastructure/db";
 
 export type UsuarioFila = {
@@ -6,7 +9,7 @@ export type UsuarioFila = {
   correo: string;
   rol: "estudiante" | "docente" | "administrador";
   activo: boolean;
-  contrasena_hash: string; // existe en la tabla, pero NO lo devolveremos en el SELECT
+  contrasena_hash: string; // NO se expone hacia fuera
 };
 
 // Tipo público (sin contraseña)
@@ -23,16 +26,30 @@ export async function verificarUsuario(
   correo: string,
   contrasena_plana: string
 ): Promise<UsuarioPublico | null> {
+  // 1️⃣ Buscar el usuario por correo (incluir el hash)
   const sql = `
-    SELECT id_usuario, nombre_completo, correo, rol, activo
+    SELECT 
+      id_usuario,
+      nombre_completo,
+      correo::text AS correo,
+      rol,
+      activo,
+      contrasena_hash
     FROM public.usuarios
     WHERE correo = $1
-      AND contrasena_hash = crypt($2, contrasena_hash)
     LIMIT 1;
   `;
 
-  const filas = await ejecutarFilas<UsuarioPublico>(sql, [correo, contrasena_plana]);
+  const filas = await ejecutarFilas<UsuarioFila>(sql, [correo.trim()]);
+  const u = filas.at(0);
+  if (!u) return null; // no existe ese correo
 
-  // ✅ Usamos at(0) con nullish coalescing para evitar undefined
-  return filas.at(0) ?? null;
+  // 2️⃣ Comparar contraseña plana con hash usando bcrypt
+  const coincide = await bcrypt.compare(contrasena_plana, u.contrasena_hash);
+  if (!coincide) return null;
+
+  // 3️⃣ Devolver el usuario sin incluir el hash
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { contrasena_hash, ...publico } = u;
+  return publico;
 }
