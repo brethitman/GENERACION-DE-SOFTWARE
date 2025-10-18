@@ -99,9 +99,11 @@ export default function Login() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-2">
-            <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all">
-            <FcGoogle className="w-6 h-6 ml-1"/>
-            <span className="ml-2">Continuar con Google</span>
+           <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all"
+              type="button"
+             onClick={() => window.location.href = "http://localhost:3000/api/v1/autenticacion/google"}>
+             <FcGoogle className="w-6 h-6 ml-1" />
+             <span className="ml-2">Continuar con Google</span>
            </button>
            <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 ml-1" fill="none" viewBox="0 0 48 48" strokeWidth="2">

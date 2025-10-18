@@ -25,6 +25,6 @@
     /* Opción A: sin ignoreDeprecations */
     /* Opción B: si quieres silenciar, usa: "ignoreDeprecations": "5.0" */
   },
-  "include": ["src"],
+  "include": ["src", "src/types"],
   "exclude": ["node_modules", "dist"]
 }

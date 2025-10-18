@@ -1,9 +1,7 @@
-// Paquetes externos (alfabéticamente)
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-// Paquetes internos
 import { buscarPorCorreo, crearUsuario } from "../repositories/usuarios.repo";
 
 export async function registrarUsuario(req: Request, res: Response) {
@@ -18,9 +16,10 @@ export async function registrarUsuario(req: Request, res: Response) {
     const contrasenaHash = await bcrypt.hash(contrasena, 10);
     const usuario = await crearUsuario({ nombre, correo, contrasenaHash, rol });
 
-    const JWT_SECRET = process.env.JWT_SECRET;
+    // 🔁 Unificamos el nombre de la variable de entorno
+    const JWT_SECRET = process.env.JWT_SECRETO;
     if (!JWT_SECRET) {
-      return res.status(500).json({ ok: false, mensaje: "Falta JWT_SECRET en el .env" });
+      return res.status(500).json({ ok: false, mensaje: "Falta JWT_SECRETO en el .env" });
     }
 
     const token = jwt.sign(
