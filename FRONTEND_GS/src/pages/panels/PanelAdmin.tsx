@@ -29,7 +29,7 @@ return (
 
     <div className="flex flex-col gap-6 w-[600px]">
       {/* Curso actual */}
-      <div className="bg-gray rounded-2xl p-6">
+      <div className="bg-gray rounded-2xl p-6s pace-y-4">
         <h2 className="text-lg font-bold text-gray-700 mb-2">CURSO</h2>
         <div className="bg-white rounded-2xl border border-gray-300 p-5 flex flex-col space-y-3">
           <div>
@@ -66,7 +66,6 @@ return (
           <ul className="text-sm text-gray-700 list-disc pl-5 space-y-1">
             <li>Ver datos de todos los usuarios</li>
             <li>Asignar roles (Editor / Ejecutor)</li>
-            <li>Dar de baja a un usuario</li>
           </ul>
           <button className="ml-auto flex items-center text-[#7E3132] font-medium hover:underline">
             Ir a Roles de Usuario <FaArrowRight className="ml-1" />
