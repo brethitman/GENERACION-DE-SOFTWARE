@@ -1,6 +1,21 @@
+import { FaArrowRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 export default function RolesUsuario() {
+    const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/panel/admin");
+  };
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white rounded-lg shadow">
+        <button
+        onClick={handleClick}
+        className="ml-auto flex items-center text-[#7E3132] font-medium hover:underline"
+        >
+        Ir a Panel Administrativo
+        <FaArrowRight className="ml-1" />
+    </button>
       <h1 className="text-xl font-bold text-red-700 mb-4">GESTIONAR ROLES DE USUARIO</h1>
 
       {/* Buscador */}
