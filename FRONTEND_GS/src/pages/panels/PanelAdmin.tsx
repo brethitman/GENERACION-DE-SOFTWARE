@@ -1,7 +1,13 @@
 import { FaArrowRight } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 export default function PanelAdmin() {
+const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/roles");
+  };
 return (
 <section className="min-h-screen bg-gray-100 flex flex-col">
   <main className="flex flex-wrap gap-8 justify-center items-start px-10 py-8">
@@ -67,8 +73,12 @@ return (
             <li>Ver datos de todos los usuarios</li>
             <li>Asignar roles (Editor / Ejecutor)</li>
           </ul>
-          <button className="ml-auto flex items-center text-[#7E3132] font-medium hover:underline">
-            Ir a Roles de Usuario <FaArrowRight className="ml-1" />
+          <button
+            onClick={handleClick}
+            className="ml-auto flex items-center text-[#7E3132] font-medium hover:underline"
+            >
+              Ir a Roles de Usuario
+            <FaArrowRight className="ml-1" />
           </button>
         </div>
 
