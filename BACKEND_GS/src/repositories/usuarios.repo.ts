@@ -48,3 +48,19 @@ export async function crearUsuario(params: {
     rol: rows[0].rol,
   };
 }
+export async function listarUsuarios(): Promise<Usuario[]> {
+  const q = `
+    SELECT id_usuario, nombre_completo, correo, rol, activo
+    FROM usuarios
+    ORDER BY nombre_completo
+  `;
+  const { rows } = await pool.query(q);
+  return rows.map((r) => ({
+    id: String(r.id_usuario),
+    nombre: r.nombre_completo,
+    correo: r.correo,
+    rol: r.rol,
+    activo: r.activo,
+  }));
+}
+

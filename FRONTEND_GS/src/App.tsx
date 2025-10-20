@@ -11,7 +11,8 @@ import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
 import Home from "./pages/home/Home";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
-
+import PanelAdmin from "./pages/panels/PanelAdmin";
+import Roles from "./pages/admi/GestionarRoles";
 
 export default function App() {
   return (
@@ -21,6 +22,16 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/roles" element={<Roles />} />
+    <Route
+      path="/panel/admin"
+      element={
+
+          <PanelAdmin />
+
+      }
+    />
+
 
         {/* Privado */}
         <Route
