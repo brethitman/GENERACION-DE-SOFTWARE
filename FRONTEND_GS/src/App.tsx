@@ -11,7 +11,7 @@ import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
-
+import PanelAdmin from "./pages/panels/PanelAdmin";
 
 export default function App() {
   return (
@@ -21,6 +21,14 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+<Route
+      path="/panel/admin"
+      element={
+
+          <PanelAdmin />
+
+      }
+    />
 
         {/* Privado */}
         <Route
