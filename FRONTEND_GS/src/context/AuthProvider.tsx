@@ -5,14 +5,18 @@ import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 // ===== Internal =====
-import api, { setAuthToken } from "../services/api";
+import { setAuthToken } from "../services/api";
+import { autenticarUsuario, verificarCodigo as verificarCodigoAPI, reenviarCodigo as reenviarCodigoAPI } from "../services/auth";
 import type { UsuarioPublico } from "../types/Usuario";
 
 import {
   AuthContext,
   type EstadoAuth,
   type Credenciales,
+  type RespuestaLogin,
 } from "./auth-context";
+
+// ✅ Importar servicios de autenticación
 
 export default function ProveedorAuth({ children }: { children: ReactNode }) {
   const [estado, setEstado] = useState<EstadoAuth>({
@@ -38,26 +42,37 @@ export default function ProveedorAuth({ children }: { children: ReactNode }) {
     setCargandoAuth(false);
   }, []);
 
-  // 👇 tu función corregida y usada más abajo
-  const iniciarSesion = async ({ correo, contrasena }: Credenciales) => {
-    const { data } = await api.post("/api/v1/autenticacion/login", {
-      correo,
-      contrasena,
-    });
+  // ✅ Función de inicio de sesión actualizada
+  const iniciarSesion = async ({ correo, contrasena }: Credenciales): Promise<RespuestaLogin> => {
+    const respuesta = await autenticarUsuario({ correo, contrasena });
+    
+    // ✅ Si requiere verificación, retornamos la respuesta sin guardar en localStorage
+    if (respuesta.requiereVerificacion) {
+      return respuesta;
+    }
 
-    const token = data?.datos?.token as string | undefined;
-    const usuario = data?.datos?.usuario as UsuarioPublico | undefined;
-
-    if (!token || !usuario)
-      throw new Error("Respuesta inválida del servidor");
-
-    localStorage.setItem("token", token);
-    localStorage.setItem("usuario", JSON.stringify(usuario));
-    setAuthToken(token);
-    setEstado({ token, usuario });
-
-    return usuario; // ✅ ahora se devuelve correctamente
+    // ✅ Si está verificado, procedemos normalmente
+    if (respuesta.datos) {
+      const { usuario: usuarioData, token: tokenData } = respuesta.datos;
+      
+      localStorage.setItem("token", tokenData);
+      localStorage.setItem("usuario", JSON.stringify(usuarioData));
+      setAuthToken(tokenData);
+      setEstado({ token: tokenData, usuario: usuarioData });
+    }
+    
+    return respuesta;
   };
+
+  // ✅ Función para verificar código
+  const verificarCodigo = async (usuarioId: number, codigo: string): Promise<void> => {
+    await verificarCodigoAPI(usuarioId, codigo);
+  };
+
+  // ✅ Función para reenviar código
+  const reenviarCodigo = async (usuarioId: number): Promise<void> => {
+  await reenviarCodigoAPI(usuarioId);
+};
 
   const cerrarSesion = () => {
     localStorage.removeItem("token");
@@ -66,7 +81,7 @@ export default function ProveedorAuth({ children }: { children: ReactNode }) {
     setEstado({ token: null, usuario: null });
   };
 
-  // ✅ Aquí se usa iniciarSesion y ya no marcará error
+  // ✅ Value actualizado con todas las funciones
   const value = useMemo(
     () => ({
       usuario: estado.usuario,
@@ -74,6 +89,8 @@ export default function ProveedorAuth({ children }: { children: ReactNode }) {
       estaAutenticado: Boolean(estado.token),
       cargandoAuth,
       iniciarSesion,
+      verificarCodigo,
+      reenviarCodigo,
       cerrarSesion,
     }),
     [estado, cargandoAuth]

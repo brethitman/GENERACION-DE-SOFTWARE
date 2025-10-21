@@ -3,8 +3,7 @@ import cors from "cors";
 import express from "express";
 import session from "express-session";
 import morgan from "morgan";
-import swaggerUi from "swagger-ui-express";
-import yaml from "yamljs";
+
 
 // ===== Internos =====
 import passport from "./config/passport.google";

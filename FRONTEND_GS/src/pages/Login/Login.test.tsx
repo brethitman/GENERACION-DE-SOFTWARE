@@ -1,15 +1,9 @@
-// src/pages/Login/Login.test.tsx
-
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { renderWithAuth } from "../../test-utils/renderWithAuth";
-import type { Credenciales } from "../../context/auth-context";
-<<<<<<< HEAD
-import type { UsuarioPublico } from "../../utils/types/Usuario";
-=======
+import type { Credenciales, RespuestaLogin } from "../../context/auth-context";
 import type { UsuarioPublico } from "../../types/Usuario";
->>>>>>> origin/josue_clean
 import Login from "./Login";
 
 const USUARIO_FAKE: UsuarioPublico = {
@@ -17,6 +11,8 @@ const USUARIO_FAKE: UsuarioPublico = {
   nombre: "Ana",
   correo: "ana@a.com",
   rol: "estudiante",
+  activo: true,
+  verificado: true,
 };
 
 describe("<Login />", () => {
@@ -31,10 +27,17 @@ describe("<Login />", () => {
   });
 
   test("muestra campos y permite iniciar sesión", async () => {
-    // Mock: iniciarSesion recibe credenciales y devuelve el usuario
+    // ✅ CORREGIDO: Mock que retorna RespuestaLogin
     const iniciarSesionMock = vi
-      .fn<(cred: Credenciales) => Promise<UsuarioPublico>>()
-      .mockResolvedValue(USUARIO_FAKE);
+      .fn<(cred: Credenciales) => Promise<RespuestaLogin>>()
+      .mockResolvedValue({
+        ok: true,
+        mensaje: "Login exitoso",
+        datos: {
+          usuario: USUARIO_FAKE,
+          token: "fake-token"
+        }
+      });
 
     renderWithAuth(<Login />, {
       ctx: {
@@ -58,9 +61,9 @@ describe("<Login />", () => {
   });
 
   test("muestra error si el backend responde 401", async () => {
-    // Mock: iniciarSesion rechaza con Error
+    // ✅ CORREGIDO: Mock que rechaza con Error
     const iniciarSesionMock = vi
-      .fn<(cred: Credenciales) => Promise<UsuarioPublico>>()
+      .fn<(cred: Credenciales) => Promise<RespuestaLogin>>()
       .mockRejectedValue(new Error("No se pudo iniciar sesión"));
 
     renderWithAuth(<Login />, {
