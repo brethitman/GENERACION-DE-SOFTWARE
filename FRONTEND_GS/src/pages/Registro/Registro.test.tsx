@@ -15,7 +15,9 @@ vi.mock("../../services/usuarios", () => ({
 
 // Mock parcial de react-router-dom para interceptar useNavigate
 vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
+  const actual = await vi.importActual<typeof import("react-router-dom")>(
+    "react-router-dom"
+  );
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -41,22 +43,19 @@ describe("Registro", () => {
     expect(screen.getByPlaceholderText("Nombre completo")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Correo")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Contraseña")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Confirmar contraseña")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Registrarme" })).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Confirmar contraseña")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Registrarme" })
+    ).toBeInTheDocument();
   });
 
-  test("renderiza el select de roles con opciones correctas", () => {
+  test("no renderiza select de roles (rol fijado por defecto en el componente)", () => {
     renderWithRouter();
 
-    const select = screen.getByRole("combobox");
-    expect(select).toBeInTheDocument();
-    expect(select).toHaveValue("docente");
-
-    const options = screen.getAllByRole("option");
-    expect(options).toHaveLength(3);
-    expect(options[0]).toHaveValue("estudiante");
-    expect(options[1]).toHaveValue("docente");
-    expect(options[2]).toHaveValue("administrador");
+    // Antes teníamos un combobox; ahora el componente fija rol sin mostrar select
+    expect(screen.queryByRole("combobox")).toBeNull();
   });
 
   test("link a Iniciar Sesión apunta a /login", () => {
@@ -75,7 +74,9 @@ describe("Registro", () => {
     // Obtener todos los botones (hay 2 toggles + el botón de enviar)
     const allButtons = screen.getAllByRole("button");
     // Filtrar para excluir el botón principal de envío ("Registrarme")
-    const toggleButtons = allButtons.filter((b) => b.textContent?.trim() !== "Registrarme");
+    const toggleButtons = allButtons.filter(
+      (b) => b.textContent?.trim() !== "Registrarme"
+    );
 
     // Verificar que inicialmente son de tipo password
     expect(passwordField).toHaveAttribute("type", "password");
@@ -148,7 +149,7 @@ describe("Registro", () => {
         nombre: "Juan Pérez",
         correo: "juan@example.com",
         contrasena: "password123",
-        rol: "docente",
+        rol: "estudiante", // <-- actualizado para coincidir con el componente
       });
     });
 
@@ -156,7 +157,8 @@ describe("Registro", () => {
       state: {
         usuarioId: "123",
         correo: "juan@example.com",
-        mensaje: "Te hemos enviado un código de verificación a tu correo electrónico.",
+        mensaje:
+          "Te hemos enviado un código de verificación a tu correo electrónico.",
       },
     });
   });

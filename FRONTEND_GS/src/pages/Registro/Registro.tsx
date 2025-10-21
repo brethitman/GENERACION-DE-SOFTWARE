@@ -10,7 +10,7 @@ export default function Registro() {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [confirmar, setConfirmar] = useState("");
-  const [rol, setRol] = useState<Rol>("docente");
+  const [rol] = useState<Rol>("estudiante"); // 👈 fijo por defecto
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
 
@@ -33,15 +33,15 @@ export default function Registro() {
 
       const res = await registrarUsuario({ nombre, correo, contrasena, rol });
 
-      // ✅ REDIRIGIR DIRECTAMENTE A VERIFICACIÓN
-      navigate("/verificacion", { 
-        state: { 
-          usuarioId: res.usuarioId, // El backend debe enviar esto
+      // ✅ Redirigir a verificación
+      navigate("/verificacion", {
+        state: {
+          usuarioId: res.usuarioId,
           correo: correo,
-          mensaje: "Te hemos enviado un código de verificación a tu correo electrónico."
-        } 
+          mensaje:
+            "Te hemos enviado un código de verificación a tu correo electrónico.",
+        },
       });
-
     } catch (err: unknown) {
       let mensaje = "No se pudo registrar";
       if (err instanceof Error) {
@@ -77,15 +77,7 @@ export default function Registro() {
           required
         />
 
-        <select
-          className="w-full border rounded-lg px-3 py-2 bg-white"
-          value={rol}
-          onChange={(e) => setRol(e.target.value as Rol)}
-        >
-          <option value="estudiante">Estudiante</option>
-          <option value="docente">Docente</option>
-          <option value="administrador">Administrador</option>
-        </select>
+        {/* 👇 El select de rol fue eliminado: siempre será 'estudiante' */}
 
         <div className="relative">
           <input
@@ -101,7 +93,11 @@ export default function Registro() {
             onClick={() => setShowPassword((s) => !s)}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
           >
-            {showPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+            {showPassword ? (
+              <FaEyeSlash className="w-5 h-5" />
+            ) : (
+              <FaEye className="w-5 h-5" />
+            )}
           </button>
         </div>
 
@@ -119,7 +115,11 @@ export default function Registro() {
             onClick={() => setShowConfirm((s) => !s)}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
           >
-            {showConfirm ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+            {showConfirm ? (
+              <FaEyeSlash className="w-5 h-5" />
+            ) : (
+              <FaEye className="w-5 h-5" />
+            )}
           </button>
         </div>
 
