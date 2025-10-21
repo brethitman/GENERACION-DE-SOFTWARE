@@ -15,4 +15,12 @@ export declare function crearUsuario(params: {
     contrasenaHash: string;
     rol: Rol;
 }): Promise<Usuario>;
+export declare function listarUsuarios(): Promise<Usuario[]>;
+export declare function actualizarUsuario(params: {
+    id: string;
+    nombre?: string;
+    correo?: string;
+    rol?: Rol;
+    activo?: boolean;
+}): Promise<Usuario | null>;
 //# sourceMappingURL=usuarios.repo.d.ts.map

@@ -63,4 +63,56 @@ export async function listarUsuarios(): Promise<Usuario[]> {
     activo: r.activo,
   }));
 }
+export async function actualizarUsuario(params: {
+  id: string;
+  nombre?: string;
+  correo?: string;
+  rol?: Rol;
+  activo?: boolean;
+}): Promise<Usuario | null> {
+  const campos: string[] = [];
+  const valores: (string | boolean)[] = [];
+  let i = 1;
+
+  if (params.nombre !== undefined) {
+    campos.push(`nombre_completo = $${i++}`);
+    valores.push(params.nombre);
+  }
+  if (params.correo !== undefined) {
+    campos.push(`correo = $${i++}`);
+    valores.push(params.correo);
+  }
+  if (params.rol !== undefined) {
+    campos.push(`rol = $${i++}`);
+    valores.push(params.rol);
+  }
+  if (params.activo !== undefined) {
+    campos.push(`activo = $${i++}`);
+    valores.push(params.activo);
+  }
+
+  if (campos.length === 0) return null; // Nada que actualizar
+
+  valores.push(params.id);
+
+  const q = `
+    UPDATE usuarios
+    SET ${campos.join(", ")}
+    WHERE id_usuario = $${i}
+    RETURNING id_usuario AS id, nombre_completo AS nombre, correo, rol, activo
+  `;
+
+  const { rows } = await pool.query(q, valores);
+  if (rows.length === 0) return null;
+
+  const r = rows[0];
+  return {
+    id: String(r.id),
+    nombre: r.nombre,
+    correo: r.correo,
+    rol: r.rol,
+    activo: r.activo,
+  };
+}
+
 

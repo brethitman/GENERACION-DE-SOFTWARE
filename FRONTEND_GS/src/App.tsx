@@ -13,6 +13,7 @@ import Roles from "./pages/admi/GestionarRoles";
 import Home from "./pages/home/Home";
 import PanelAdmin from "./pages/panels/PanelAdmin";
 import PanelDocenteEditor from "./pages/panels/PanelDocenteEditor";
+import PanelDocenteEjecutor from "./pages/panels/PanelDocenteEjecutor";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
 
 export default function App() {
@@ -56,6 +57,14 @@ export default function App() {
           element={
             <RutaPrivada>
               <PanelDocenteEditor />
+            </RutaPrivada>
+          }
+        />
+        <Route
+          path="/panel/docente-ejecutor"
+          element={
+            <RutaPrivada>
+              <PanelDocenteEjecutor />
             </RutaPrivada>
           }
         />
