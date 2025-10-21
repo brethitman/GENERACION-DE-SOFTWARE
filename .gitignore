@@ -14,3 +14,4 @@ BACKEND_GS/secreto_gui*
 *.env
 .env.*
 BACKEND_GS/.env
+BACKEND_GS/.env
