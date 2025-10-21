@@ -1,24 +1,30 @@
+// src/pages/Registro/Registro.test.tsx
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { vi } from "vitest";
 import Registro from "./Registro";
 
-// Mock de las dependencias
-jest.mock("../../services/usuarios", () => ({
-  registrarUsuario: jest.fn(),
+// Mocks con Vitest
+const mockRegistrarUsuario = vi.fn();
+const mockNavigate = vi.fn();
+
+// Mock del servicio de usuarios
+vi.mock("../../services/usuarios", () => ({
+  registrarUsuario: (args: unknown) => mockRegistrarUsuario(args),
 }));
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: jest.fn(),
-}));
+// Mock parcial de react-router-dom para interceptar useNavigate
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("Registro", () => {
-  const mockRegistrarUsuario = require("../../services/usuarios").registrarUsuario;
-  const mockNavigate = jest.fn();
-
   beforeEach(() => {
-    jest.clearAllMocks();
-    require("react-router-dom").useNavigate.mockReturnValue(mockNavigate);
+    vi.clearAllMocks();
   });
 
   const renderWithRouter = () =>
@@ -30,7 +36,7 @@ describe("Registro", () => {
 
   test("renderiza el formulario de registro correctamente", () => {
     renderWithRouter();
-    
+
     expect(screen.getByText("Crear cuenta")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Nombre completo")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Correo")).toBeInTheDocument();
@@ -41,11 +47,11 @@ describe("Registro", () => {
 
   test("renderiza el select de roles con opciones correctas", () => {
     renderWithRouter();
-    
+
     const select = screen.getByRole("combobox");
     expect(select).toBeInTheDocument();
     expect(select).toHaveValue("docente");
-    
+
     const options = screen.getAllByRole("option");
     expect(options).toHaveLength(3);
     expect(options[0]).toHaveValue("estudiante");
@@ -62,23 +68,25 @@ describe("Registro", () => {
 
   test("mostrar y ocultar contraseña funciona para ambos campos", () => {
     renderWithRouter();
-    
+
     const passwordField = screen.getByPlaceholderText("Contraseña");
     const confirmField = screen.getByPlaceholderText("Confirmar contraseña");
-    
-    // Botones para mostrar/ocultar (pueden estar ocultos para tests de accesibilidad)
-    const toggleButtons = screen.getAllByRole("button", { name: "" });
-    
+
+    // Obtener todos los botones (hay 2 toggles + el botón de enviar)
+    const allButtons = screen.getAllByRole("button");
+    // Filtrar para excluir el botón principal de envío ("Registrarme")
+    const toggleButtons = allButtons.filter((b) => b.textContent?.trim() !== "Registrarme");
+
     // Verificar que inicialmente son de tipo password
     expect(passwordField).toHaveAttribute("type", "password");
     expect(confirmField).toHaveAttribute("type", "password");
-    
-    // Hacer clic en el primer botón (para contraseña)
+
+    // Hacer clic en el primer toggle (para contraseña)
     fireEvent.click(toggleButtons[0]);
     expect(passwordField).toHaveAttribute("type", "text");
     expect(confirmField).toHaveAttribute("type", "password");
-    
-    // Hacer clic en el segundo botón (para confirmar contraseña)
+
+    // Hacer clic en el segundo toggle (para confirmar contraseña)
     fireEvent.click(toggleButtons[1]);
     expect(passwordField).toHaveAttribute("type", "text");
     expect(confirmField).toHaveAttribute("type", "text");
@@ -86,7 +94,7 @@ describe("Registro", () => {
 
   test("muestra error cuando las contraseñas no coinciden", async () => {
     renderWithRouter();
-    
+
     // Llenar el formulario
     fireEvent.change(screen.getByPlaceholderText("Nombre completo"), {
       target: { value: "Juan Pérez" },
@@ -100,14 +108,14 @@ describe("Registro", () => {
     fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
       target: { value: "password456" }, // Contraseña diferente
     });
-    
-    // Enviar formulario
-    fireEvent.submit(screen.getByRole("form"));
-    
+
+    // Enviar formulario (click al botón)
+    fireEvent.click(screen.getByRole("button", { name: /Registrarme/i }));
+
     await waitFor(() => {
       expect(screen.getByText("Las contraseñas no coinciden")).toBeInTheDocument();
     });
-    
+
     expect(mockRegistrarUsuario).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
@@ -115,9 +123,9 @@ describe("Registro", () => {
   test("registra usuario exitosamente y redirige a verificación", async () => {
     const mockResponse = { usuarioId: "123" };
     mockRegistrarUsuario.mockResolvedValue(mockResponse);
-    
+
     renderWithRouter();
-    
+
     // Llenar el formulario
     fireEvent.change(screen.getByPlaceholderText("Nombre completo"), {
       target: { value: "Juan Pérez" },
@@ -131,10 +139,10 @@ describe("Registro", () => {
     fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
       target: { value: "password123" }, // Contraseñas coinciden
     });
-    
+
     // Enviar formulario
-    fireEvent.submit(screen.getByRole("form"));
-    
+    fireEvent.click(screen.getByRole("button", { name: /Registrarme/i }));
+
     await waitFor(() => {
       expect(mockRegistrarUsuario).toHaveBeenCalledWith({
         nombre: "Juan Pérez",
@@ -143,22 +151,22 @@ describe("Registro", () => {
         rol: "docente",
       });
     });
-    
+
     expect(mockNavigate).toHaveBeenCalledWith("/verificacion", {
       state: {
         usuarioId: "123",
         correo: "juan@example.com",
-        mensaje: "Te hemos enviado un código de verificación a tu correo electrónico."
-      }
+        mensaje: "Te hemos enviado un código de verificación a tu correo electrónico.",
+      },
     });
   });
 
   test("muestra error cuando el registro falla", async () => {
     const errorMessage = "Error de conexión";
     mockRegistrarUsuario.mockRejectedValue(new Error(errorMessage));
-    
+
     renderWithRouter();
-    
+
     // Llenar el formulario
     fireEvent.change(screen.getByPlaceholderText("Nombre completo"), {
       target: { value: "Juan Pérez" },
@@ -172,22 +180,27 @@ describe("Registro", () => {
     fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
       target: { value: "password123" },
     });
-    
+
     // Enviar formulario
-    fireEvent.submit(screen.getByRole("form"));
-    
+    fireEvent.click(screen.getByRole("button", { name: /Registrarme/i }));
+
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
-    
+
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   test("muestra estado de carga durante el registro", async () => {
-    mockRegistrarUsuario.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
-    
+    // Crear una promesa que no se resuelve inmediatamente
+    let resolvePromise: (value: unknown) => void;
+    const promise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    mockRegistrarUsuario.mockReturnValue(promise);
+
     renderWithRouter();
-    
+
     // Llenar el formulario
     fireEvent.change(screen.getByPlaceholderText("Nombre completo"), {
       target: { value: "Juan Pérez" },
@@ -201,11 +214,16 @@ describe("Registro", () => {
     fireEvent.change(screen.getByPlaceholderText("Confirmar contraseña"), {
       target: { value: "password123" },
     });
-    
+
     // Enviar formulario
-    fireEvent.submit(screen.getByRole("form"));
-    
+    fireEvent.click(screen.getByRole("button", { name: /Registrarme/i }));
+
+    // Verificar estado de carga
     expect(screen.getByText("Registrando...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Registrando..." })).toBeDisabled();
+
+    // Resolver la promesa para limpiar
+    resolvePromise!({ usuarioId: "123" });
+    await promise;
   });
 });

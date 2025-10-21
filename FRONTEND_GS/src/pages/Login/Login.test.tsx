@@ -1,18 +1,28 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+// src/pages/Login/Login.test.tsx
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { renderWithAuth } from "../../test-utils/renderWithAuth";
-import type { Credenciales, RespuestaLogin } from "../../context/auth-context";
+import type { Credenciales } from "../../context/auth-context";
 import type { UsuarioPublico } from "../../types/Usuario";
 import Login from "./Login";
+
+// Mock del hook useAuth para tener control total en cada test
+vi.mock("../../hooks/useAuth", () => {
+  return {
+    useAuth: vi.fn(),
+  };
+});
+import { useAuth as useAuthMocked } from "../../hooks/useAuth";
 
 const USUARIO_FAKE: UsuarioPublico = {
   id: 1,
   nombre: "Ana",
   correo: "ana@a.com",
   rol: "estudiante",
-  activo: true,
-  verificado: true,
+  activo: false,
+  verificado: false
 };
 
 describe("<Login />", () => {
@@ -22,35 +32,38 @@ describe("<Login />", () => {
   });
 
   test("renderiza el título", () => {
+    // Proveer un useAuth por defecto (solo para que el componente no falle)
+    (useAuthMocked as unknown as jest.Mock).mockReturnValue({
+      iniciarSesion: vi.fn(),
+      cargandoAuth: false,
+    });
+
     renderWithAuth(<Login />, { ctx: { cargandoAuth: false } });
     expect(screen.getByRole("heading", { name: /iniciar sesión/i })).toBeInTheDocument();
   });
 
   test("muestra campos y permite iniciar sesión", async () => {
-    // ✅ CORREGIDO: Mock que retorna RespuestaLogin
+    // Mock: iniciarSesion recibe credenciales y devuelve { datos: { usuario } }
     const iniciarSesionMock = vi
-      .fn<(cred: Credenciales) => Promise<RespuestaLogin>>()
-      .mockResolvedValue({
-        ok: true,
-        mensaje: "Login exitoso",
-        datos: {
-          usuario: USUARIO_FAKE,
-          token: "fake-token"
-        }
-      });
+      .fn<(cred: Credenciales) => Promise<{ datos: { usuario: UsuarioPublico } }>>()
+      .mockResolvedValue({ datos: { usuario: USUARIO_FAKE } });
+
+    (useAuthMocked as unknown as jest.Mock).mockReturnValue({
+      iniciarSesion: iniciarSesionMock,
+      cargandoAuth: false,
+    });
 
     renderWithAuth(<Login />, {
       ctx: {
-        iniciarSesion: iniciarSesionMock,
         cargandoAuth: false,
       },
       route: "/login",
     });
 
-    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: "a@a.com" } });
-    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: "goodpass" } });
-
-    fireEvent.submit(screen.getByRole("button", { name: /ingresar/i }));
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText(/correo/i), "a@a.com");
+    await user.type(screen.getByLabelText(/contraseña/i), "goodpass");
+    await user.click(screen.getByRole("button", { name: /ingresar/i }));
 
     await waitFor(() => {
       expect(iniciarSesionMock).toHaveBeenCalledWith({
@@ -61,23 +74,27 @@ describe("<Login />", () => {
   });
 
   test("muestra error si el backend responde 401", async () => {
-    // ✅ CORREGIDO: Mock que rechaza con Error
+    // Mock: iniciarSesion rechaza con Error
     const iniciarSesionMock = vi
-      .fn<(cred: Credenciales) => Promise<RespuestaLogin>>()
+      .fn<(cred: Credenciales) => Promise<{ datos?: { usuario?: UsuarioPublico } }>>()
       .mockRejectedValue(new Error("No se pudo iniciar sesión"));
+
+    (useAuthMocked as unknown as jest.Mock).mockReturnValue({
+      iniciarSesion: iniciarSesionMock,
+      cargandoAuth: false,
+    });
 
     renderWithAuth(<Login />, {
       ctx: {
-        iniciarSesion: iniciarSesionMock,
         cargandoAuth: false,
       },
       route: "/login",
     });
 
-    fireEvent.change(screen.getByLabelText(/correo/i), { target: { value: "a@a.com" } });
-    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: "bad" } });
-
-    fireEvent.submit(screen.getByRole("button", { name: /ingresar/i }));
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText(/correo/i), "a@a.com");
+    await user.type(screen.getByLabelText(/contraseña/i), "bad");
+    await user.click(screen.getByRole("button", { name: /ingresar/i }));
 
     expect(
       await screen.findByText(/no se pudo iniciar sesión/i)
