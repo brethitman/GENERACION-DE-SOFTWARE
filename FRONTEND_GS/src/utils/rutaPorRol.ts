@@ -1,9 +1,11 @@
-export type Rol = "estudiante" | "docente" | "administrador";
+export type Rol = "estudiante" | "editor" | "ejecutor" | "administrador";
 
 export const rutaPorRol = (rol?: string) => {
   switch ((rol || "").toLowerCase()) {
-    case "docente":
-      return "/panel/docente";
+    case "editor":
+      return "/panel/docente-editor";
+    case "ejecutor":
+      return "/panel/docente-ejecutor";
     case "administrador":
       return "/panel/admin";
     case "estudiante":

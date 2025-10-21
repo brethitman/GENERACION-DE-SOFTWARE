@@ -99,11 +99,9 @@ export default function Login() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-2">
-            <button
-             type="button"
-             onClick={() => window.location.href = "http://localhost:3000/api/v1/autenticacion/google"}
-             className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all"
-            >
+           <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all"
+              type="button"
+             onClick={() => window.location.href = "http://localhost:3000/api/v1/autenticacion/google"}>
              <FcGoogle className="w-6 h-6 ml-1" />
              <span className="ml-2">Continuar con Google</span>
            </button>

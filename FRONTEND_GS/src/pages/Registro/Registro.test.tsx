@@ -13,8 +13,8 @@ describe("Registro /", () => {
 
   test("renderiza los botones a otros registros", () => {
     renderWithRouter();
-    expect(screen.getByText("Registrarse con Google")).toBeInTheDocument();
-    expect(screen.getByText("Registrarse con Microsoft")).toBeInTheDocument();
+    expect(screen.getByText("Continuar con Google")).toBeInTheDocument();
+    expect(screen.getByText("Continuar con Microsoft")).toBeInTheDocument();
   });
 
   test("link a Iniciar Sesión apunta a /login", () => {

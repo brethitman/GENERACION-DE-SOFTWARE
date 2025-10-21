@@ -6,12 +6,14 @@ import { Route, Routes } from "react-router-dom";
 // ===== Internal =====
 import RutaPrivada from "./components/RutaPrivada/RutaPrivada";
 import MainLayout from "./layouts/MainLayout";
-import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
 import Roles from "./pages/admi/GestionarRoles";
+import Home from "./pages/home/Home";
 import PanelAdmin from "./pages/panels/PanelAdmin";
+import PanelDocenteEditor from "./pages/panels/PanelDocenteEditor";
+import PanelDocenteEjecutor from "./pages/panels/PanelDocenteEjecutor";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
 
 export default function App() {
@@ -23,17 +25,16 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/roles" element={<Roles />} />
-    <Route
-      path="/panel/admin"
-      element={
-
-          <PanelAdmin />
-
-      }
-    />
-
 
         {/* Privado */}
+        <Route
+          path="/panel/admin"
+          element={
+            <RutaPrivada>
+              <PanelAdmin />
+            </RutaPrivada>
+          }
+        />
         <Route
           path="/usuarios"
           element={
@@ -50,7 +51,22 @@ export default function App() {
             </RutaPrivada>
           }
         />
-
+        <Route
+          path="/panel/docente-editor"
+          element={
+            <RutaPrivada>
+              <PanelDocenteEditor />
+            </RutaPrivada>
+          }
+        />
+        <Route
+          path="/panel/docente-ejecutor"
+          element={
+            <RutaPrivada>
+              <PanelDocenteEjecutor />
+            </RutaPrivada>
+          }
+        />
         {/* Fallback */}
         <Route path="*" element={<Home />} />
       </Route>

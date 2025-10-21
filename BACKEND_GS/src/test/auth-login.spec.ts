@@ -1,7 +1,11 @@
 // src/test/auth-login.spec.ts
-import request from "supertest";              
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import passport from 'passport'; 
+import request from "supertest";     
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { vitest } from "vitest";
 import { describe, it, expect, vi, beforeEach } from "vitest";
- 
+
 import app from "../app";
 
 // 🧪 Mock del repositorio de autenticación
@@ -51,4 +55,15 @@ describe("POST /api/v1/autenticacion/login", () => {
       .send({ correo: "ana@example.com", contrasena: "zzz" });
     expect(res.status).toBe(401);
   });
+
+  vi.mock('passport-google-oidc', () => ({
+    Strategy: vi.fn().mockImplementation((_options, _verify) => {
+      return {
+        name: 'google',
+        authenticate: vi.fn(),
+      };
+    }),
+  }));
+
+
 });
