@@ -1,5 +1,5 @@
-import { FaArrowRight } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
+import { FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 export default function PanelAdmin() {

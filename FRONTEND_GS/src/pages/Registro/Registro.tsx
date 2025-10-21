@@ -4,9 +4,9 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {FcGoogle} from 'react-icons/fc';
 import { Link, useNavigate } from "react-router-dom";
 
+import Modal from "../../components/Modal/Modal";
 import { registrarUsuario } from "../../services/usuarios";
 import type { Rol } from "../../types/Usuario";
-
 
 export default function Registro() {
 
@@ -23,7 +23,15 @@ export default function Registro() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // modal de confirmar correo
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const navigate = useNavigate();
+
+  const cerrarModal = () => {
+    setIsModalOpen(false);
+    navigate("/login"); // Redirigir al login
+  };
 
   const enviar = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,7 +52,8 @@ export default function Registro() {
       localStorage.setItem("token", res.datos.token);
 
       setOk("Registro exitoso. Redirigiendo al login…");
-      setTimeout(() => navigate("/login", { replace: true }), 1200);
+      //setTimeout(() => navigate("/login", { replace: true }), 1200);
+      setIsModalOpen(true)
     } catch (err: unknown) {
       let mensaje = "No se pudo registrar";
 
@@ -182,6 +191,19 @@ export default function Registro() {
       Iniciar Sesión
        </Link>
     </p>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={cerrarModal}
+        title="Verificación pendiente"
+      >
+        <p>
+          Tu registro se ha completado correctamente.
+          Para finalizar el proceso, confirma tu dirección de correo electrónico mediante el enlace que te enviamos
+        </p>
+      </Modal>
+
+
     </section>
   );
 }

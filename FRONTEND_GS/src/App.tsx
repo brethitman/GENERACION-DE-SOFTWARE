@@ -9,10 +9,11 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
-import Home from "./pages/home/Home";
-import PanelEstudiante from "./pages/panels/PanelEstudiante";
-import PanelAdmin from "./pages/panels/PanelAdmin";
 import Roles from "./pages/admi/GestionarRoles";
+import Home from "./pages/home/Home";
+import PanelAdmin from "./pages/panels/PanelAdmin";
+import PanelDocenteEditor from "./pages/panels/PanelDocenteEditor";
+import PanelEstudiante from "./pages/panels/PanelEstudiante";
 
 export default function App() {
   return (
@@ -50,7 +51,14 @@ export default function App() {
             </RutaPrivada>
           }
         />
-
+        <Route
+          path="/panel/docente-editor"
+          element={
+            <RutaPrivada>
+              <PanelDocenteEditor />
+            </RutaPrivada>
+          }
+        />
         {/* Fallback */}
         <Route path="*" element={<Home />} />
       </Route>
