@@ -10,9 +10,9 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
-import PanelEstudiante from "./pages/panels/PanelEstudiante";
-import PanelAdmin from "./pages/panels/PanelAdmin";
 import Roles from "./pages/admi/GestionarRoles";
+import PanelAdmin from "./pages/panels/PanelAdmin";
+import PanelEstudiante from "./pages/panels/PanelEstudiante";
 
 export default function App() {
   return (

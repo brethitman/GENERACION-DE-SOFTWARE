@@ -71,7 +71,7 @@ export async function actualizarUsuario(params: {
   activo?: boolean;
 }): Promise<Usuario | null> {
   const campos: string[] = [];
-  const valores: any[] = [];
+  const valores: (string | boolean)[] = [];
   let i = 1;
 
   if (params.nombre !== undefined) {
