@@ -1,30 +1,34 @@
-// src/test/auth-login.spec.ts
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import passport from 'passport'; 
-import request from "supertest";     
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { vitest } from "vitest";
+
+import type { Request, Response, NextFunction } from "express";
+import request from "supertest";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import app from "../app";
 
-// 🧪 Mock del repositorio de autenticación
-vi.mock("../repositories/autenticacion.repo", () => {
+// 🔹 Mock del repositorio de autenticación
+vi.mock("../repositories/autenticacion.repo", () => ({
+  verificarUsuario: vi.fn(async (correo: string, contrasena: string) => {
+    if (correo === "ana@example.com" && contrasena === "123456") {
+      return {
+        id_usuario: 1,
+        nombre_completo: "Ana",
+        correo,
+        rol: "estudiante",
+        activo: true,
+        verificado: true,
+      };
+    }
+    return null;
+  }),
+}));
+
+// 🔹 Mock de passport para que no falle por Google OAuth
+vi.mock("../config/passport.google", () => {
   return {
-    verificarUsuario: vi.fn(async (correo: string, contrasena: string) => {
-      if (correo === "ana@example.com" && contrasena === "123456") {
-        // 👇 Devuelve el objeto que tu controlador espera
-        return {
-          id_usuario: "1",
-          nombre_completo: "Ana",
-          correo,
-          rol: "estudiante",
-          activo: true,
-        };
-      }
-      // simulamos fallo de credenciales
-      return null;
-    }),
+    default: {
+      initialize: () => (req: Request, res: Response, next: NextFunction) => next(),
+      session: () => (req: Request, res: Response, next: NextFunction) => next(),
+    },
   };
 });
 
@@ -44,26 +48,18 @@ describe("POST /api/v1/autenticacion/login", () => {
       .send({ correo: "ana@example.com", contrasena: "123456" });
 
     expect(res.status).toBe(200);
-    expect(res.body?.ok).toBe(true);
-    expect(res.body?.datos?.usuario?.correo).toBe("ana@example.com");
-    expect(res.body?.datos?.token).toBeDefined(); // debería generarse un JWT
+
+    expect(res.body.ok).toBe(true);
+    expect(res.body.datos.usuario.correo).toBe("ana@example.com");
+    expect(res.body.datos.token).toBeDefined(); // se genera JWT
   });
 
   it("401 con credenciales inválidas", async () => {
     const res = await request(app)
       .post("/api/v1/autenticacion/login")
       .send({ correo: "ana@example.com", contrasena: "zzz" });
+
+
     expect(res.status).toBe(401);
   });
-
-  vi.mock('passport-google-oidc', () => ({
-    Strategy: vi.fn().mockImplementation((_options, _verify) => {
-      return {
-        name: 'google',
-        authenticate: vi.fn(),
-      };
-    }),
-  }));
-
-
 });

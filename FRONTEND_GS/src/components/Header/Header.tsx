@@ -22,11 +22,11 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center gap-2">
-          {estaAutenticado ? (
+          {estaAutenticado && usuario ? (
             <>
                 <UserDropdown
-                      username= {usuario!.nombre}
-                      rol={usuario!.rol}
+                      nombre= {usuario.nombre}
+                      rol={usuario.rol}
                       avatarUrl=""
                       onLogout={cerrarSesion}
                     />

@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
-import { rutaPorRol } from "../../utils/rutaPorRol"; // 👈 la volvemos a usar
-
+import { rutaPorRol } from "../../utils/rutaPorRol";
 
 export default function Login() {
   const [correo, setCorreo] = useState("");
@@ -24,8 +23,14 @@ export default function Login() {
     setError(null);
     setCargando(true);
     try {
-      const usuario = await iniciarSesion({ correo, contrasena });
-      navigate(rutaPorRol(usuario.rol), { replace: true }); // ✅ ahora sí lo usamos
+
+      const respuesta = await iniciarSesion({ correo, contrasena });
+      
+      // ✅ CORREGIDO: Usar respuesta.datos.usuario.rol en lugar de usuario.rol
+      if (respuesta.datos?.usuario) {
+        navigate(rutaPorRol(respuesta.datos.usuario.rol), { replace: true });
+      }
+      
     } catch (err) {
       const msg = err instanceof Error ? err.message : "No se pudo iniciar sesión";
       setError(msg);
@@ -99,9 +104,11 @@ export default function Login() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-2">
-           <button className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all"
+
+           <button
+	            className="flex items-center justify-center w-5/6 rounded-lg px-4 py-2 bg-white text-stone-600 border border-stone-400 hover:bg-stone-200 disabled:opacity-60 transition-all"
               type="button"
-             onClick={() => window.location.href = "http://localhost:3000/api/v1/autenticacion/google"}>
+              onClick={() => window.location.href = "http://localhost:3000/api/v1/autenticacion/google"}>
              <FcGoogle className="w-6 h-6 ml-1" />
              <span className="ml-2">Continuar con Google</span>
            </button>

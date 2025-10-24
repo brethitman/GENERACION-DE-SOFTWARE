@@ -1,8 +1,8 @@
-// src/layouts/MainLayout.tsx
+
 import { Outlet } from "react-router-dom";
 
 import Header from "../components/Header/Header";
-import { useAuth } from "../context/auth-context"; // ⬅️ usa el hook del contexto real
+import { useAuth } from "../hooks/useAuth"; // ⬅️ Cambiar a usar el hook personalizado
 
 export default function MainLayout() {
   const { cargandoAuth } = useAuth();
@@ -28,4 +28,5 @@ export default function MainLayout() {
       </footer>
     </div>
   );
+
 }

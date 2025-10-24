@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verificarUsuario = verificarUsuario;
-// src/repositories/autenticacion.repo.ts
+exports.obtenerUsuarioPorId = obtenerUsuarioPorId;
+exports.marcarUsuarioComoVerificado = marcarUsuarioComoVerificado;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const db_1 = require("../infrastructure/db");
 /**
@@ -20,6 +21,7 @@ async function verificarUsuario(correo, contrasena_plana) {
       correo::text AS correo,
       rol,
       activo,
+      verificado, -- ✅ NUEVO CAMPO
       contrasena_hash
     FROM public.usuarios
     WHERE correo = $1
@@ -37,5 +39,35 @@ async function verificarUsuario(correo, contrasena_plana) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { contrasena_hash, ...publico } = u;
     return publico;
+}
+/**
+ * Obtiene un usuario por ID
+ */
+async function obtenerUsuarioPorId(id_usuario) {
+    const sql = `
+    SELECT 
+      id_usuario,
+      nombre_completo,
+      correo::text AS correo,
+      rol,
+      activo,
+      verificado
+    FROM public.usuarios
+    WHERE id_usuario = $1
+    LIMIT 1;
+  `;
+    const filas = await (0, db_1.ejecutarFilas)(sql, [id_usuario]);
+    return filas[0] || null;
+}
+/**
+ * Marca un usuario como verificado
+ */
+async function marcarUsuarioComoVerificado(id_usuario) {
+    const sql = `
+    UPDATE public.usuarios 
+    SET verificado = true 
+    WHERE id_usuario = $1
+  `;
+    await (0, db_1.ejecutarConsulta)(sql, [id_usuario]);
 }
 //# sourceMappingURL=autenticacion.repo.js.map

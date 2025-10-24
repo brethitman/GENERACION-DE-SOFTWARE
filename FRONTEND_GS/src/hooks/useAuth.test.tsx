@@ -1,14 +1,12 @@
 // src/hooks/useAuth.test.tsx
 
-// EXTERNOS
 import { renderHook, act } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import { vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import type { ReactNode } from "react";
+import { MemoryRouter } from "react-router-dom";
 
-// INTERNOS
-// 👇 Alias para evitar choque entre nombre de tipo y valor (AuthProvider)
-import AuthProviderCmp from "../context/AuthProvider"; // ajusta la ruta si tu archivo se llama distinto
+// 👇 Importa el proveedor real (AuthProvider) que uses en la app
+import AuthProviderCmp from "../context/AuthProvider";
 import { useAuth } from "./useAuth";
 
 // Stub de localStorage tipado (sin any)
@@ -18,14 +16,14 @@ const localStorageStub = {
   removeItem: vi.fn(),
   clear: vi.fn(),
   key: vi.fn(),
-  length: 0
+  length: 0,
 } as unknown as Storage;
 
 vi.stubGlobal("localStorage", localStorageStub);
 
-// Wrapper sin usar React.FC para evitar interpretaciones de tipo
+// Wrapper: ahora envuelve el provider CON MemoryRouter para que useNavigate funcione
 function Wrapper({ children }: { children: ReactNode }) {
-  return <AuthProviderCmp>{children}</AuthProviderCmp>;
+  return <MemoryRouter><AuthProviderCmp>{children}</AuthProviderCmp></MemoryRouter>;
 }
 
 describe("useAuth", () => {

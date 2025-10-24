@@ -1,4 +1,4 @@
-// src/services/usuarios.ts
+
 import type { UsuarioPublico, Rol } from "../types/Usuario";
 
 import api from "./api";
@@ -13,13 +13,15 @@ export interface RegistroRequest {
   nombre: string;
   correo: string;
   contrasena: string;
-  rol?: Rol; // opcional, backend default "estudiante"
+  rol?: Rol;
 }
 
 export interface RegistroResponse {
   ok: boolean;
   mensaje: string;
-  datos: {
+  requiereVerificacion?: boolean; // ✅ AGREGAR ESTO
+  usuarioId?: number; // ✅ AGREGAR ESTO
+  datos?: { // ✅ HACER datos OPCIONAL con ?
     usuario: UsuarioPublico;
     token: string;
   };

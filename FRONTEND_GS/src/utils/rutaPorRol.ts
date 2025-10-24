@@ -1,3 +1,4 @@
+
 export type Rol = "estudiante" | "editor" | "ejecutor" | "administrador";
 
 export const rutaPorRol = (rol?: string) => {

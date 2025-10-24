@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 
 interface UserDropdownProps {
-  username: string;
+  nombre: string;
   rol: string;
   avatarUrl?: string;
   onLogout: () => void;
 }
 
-export default function UserDropdown({ username, rol, avatarUrl, onLogout }: UserDropdownProps) {
+export default function UserDropdown({ nombre, rol, avatarUrl, onLogout }: UserDropdownProps) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -21,7 +21,7 @@ export default function UserDropdown({ username, rol, avatarUrl, onLogout }: Use
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const initials = username
+  const initials = nombre
     .split(" ")
     .map((n) => n[0]?.toUpperCase())
     .slice(0, 2)
@@ -36,13 +36,13 @@ export default function UserDropdown({ username, rol, avatarUrl, onLogout }: Use
 
         <div className="flex flex-col items-start">
           <span className="text-[#7E3132] text-xs">{rol}</span>
-          <span className="font-semibold text-sm">{username}</span>
+          <span className="font-semibold text-sm">{nombre}</span>
         </div>
 
         {avatarUrl ? (
           <img
             src={avatarUrl}
-            alt={username}
+            alt={nombre}
             className="w-8 h-8 rounded-full object-cover border border-stone-300"
           />
         ) : (
@@ -63,4 +63,5 @@ export default function UserDropdown({ username, rol, avatarUrl, onLogout }: Use
       )}
     </div>
   );
+
 }

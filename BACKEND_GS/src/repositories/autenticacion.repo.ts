@@ -1,7 +1,7 @@
-// src/repositories/autenticacion.repo.ts
+
 import bcrypt from "bcryptjs";
 
-import { ejecutarFilas } from "../infrastructure/db";
+import { ejecutarFilas, ejecutarConsulta } from "../infrastructure/db";
 
 export type UsuarioFila = {
   id_usuario: number;
@@ -9,13 +9,15 @@ export type UsuarioFila = {
   correo: string;
   rol: "estudiante" | "docente" | "administrador";
   activo: boolean;
+  verificado: boolean; // ✅ NUEVO CAMPO
   contrasena_hash: string; // NO se expone hacia fuera
 };
 
 // Tipo público (sin contraseña)
 export type UsuarioPublico = Pick<
   UsuarioFila,
-  "id_usuario" | "nombre_completo" | "correo" | "rol" | "activo"
+
+  "id_usuario" | "nombre_completo" | "correo" | "rol" | "activo" | "verificado"
 >;
 
 /**
@@ -34,6 +36,7 @@ export async function verificarUsuario(
       correo::text AS correo,
       rol,
       activo,
+      verificado, -- ✅ NUEVO CAMPO
       contrasena_hash
     FROM public.usuarios
     WHERE correo = $1
@@ -52,4 +55,41 @@ export async function verificarUsuario(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { contrasena_hash, ...publico } = u;
   return publico;
+}
+/**
+ * Obtiene un usuario por ID
+ */
+export async function obtenerUsuarioPorId(
+  id_usuario: number
+): Promise<UsuarioPublico | null> {
+  const sql = `
+    SELECT 
+      id_usuario,
+      nombre_completo,
+      correo::text AS correo,
+      rol,
+      activo,
+      verificado
+    FROM public.usuarios
+    WHERE id_usuario = $1
+    LIMIT 1;
+  `;
+
+  const filas = await ejecutarFilas<UsuarioPublico>(sql, [id_usuario]);
+  return filas[0] || null;
+}
+
+/**
+ * Marca un usuario como verificado
+ */
+export async function marcarUsuarioComoVerificado(
+  id_usuario: number
+): Promise<void> {
+  const sql = `
+    UPDATE public.usuarios 
+    SET verificado = true 
+    WHERE id_usuario = $1
+  `;
+  
+  await ejecutarConsulta(sql, [id_usuario]);
 }

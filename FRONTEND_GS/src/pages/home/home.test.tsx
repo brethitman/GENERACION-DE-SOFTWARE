@@ -39,7 +39,9 @@ describe("<Home />", () => {
           id: 1,
           nombre: "María Pérez",
           correo: "maria@correo.com",
-          rol: "docente",
+          rol: "estudiante",
+          activo: true,
+          verificado: true
         },
       },
     });
@@ -48,7 +50,7 @@ describe("<Home />", () => {
       screen.getByText(/bienvenido a tu panel principal/i)
     ).toBeInTheDocument();
     expect(screen.getByText("María Pérez")).toBeInTheDocument();
-    expect(screen.getByText(/rol:\s*docente/i)).toBeInTheDocument();
+    expect(screen.getByText(/rol:\s*estudiante/i)).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: /resumen general/i })
     ).toBeInTheDocument();

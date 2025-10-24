@@ -1,7 +1,7 @@
 //usuarios.repo.ts
 import { pool } from "../infrastructure/db";
 
-export type Rol = "docente" | "estudiante" | "administrador";
+export type Rol = "editor" | "ejecutor" | "estudiante" | "administrador";
 export type Usuario = { id: string; nombre: string; correo: string; rol: Rol; activo?: boolean };
 
 export async function buscarPorCorreo(correo: string): Promise<(Usuario & { contrasena_hash?: string }) | null> {

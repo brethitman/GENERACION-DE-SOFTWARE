@@ -1,10 +1,10 @@
-// src/test-utils/renderWithAuth.tsx
 
 import { render } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 
-import { AuthContext, type Ctx } from "../context/auth-context"; // ← grupo interno (separado por 1 línea)
+
+import { AuthContext, type Ctx } from "../context/auth-context";
 
 const defaultCtx: Ctx = {
   usuario: null,
@@ -14,7 +14,15 @@ const defaultCtx: Ctx = {
   iniciarSesion: async () => {
     throw new Error("iniciarSesion no mockeado");
   },
-  cerrarSesion: () => {},
+
+  cerrarSesion: () => { },
+  // ✅ AGREGADAS LAS NUEVAS FUNCIONES
+  verificarCodigo: async (_usuarioId: number, _codigo: string): Promise<void> => {
+    throw new Error("verificarCodigo no mockeado");
+  },
+  reenviarCodigo: async (_usuarioId: number): Promise<void> => {
+    throw new Error("reenviarCodigo no mockeado");
+  }
 };
 
 export function renderWithAuth(
@@ -32,3 +40,15 @@ export function renderWithAuth(
     </AuthContext.Provider>
   );
 }
+
+
+// ✅ FUNCIONES MOCK PARA TESTS
+export const verificarCodigo = async (_usuarioId: number, _codigo: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return { ok: true, mensaje: "Código verificado" };
+};
+
+export const reenviarCodigo = async (_usuarioId: number) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return { ok: true, mensaje: "Código reenviado" };
+};

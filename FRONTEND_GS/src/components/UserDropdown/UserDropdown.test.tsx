@@ -4,7 +4,7 @@ import UserDropdown from "./UserDropdown";
 
 // Mocks de datos
 const mockUser = {
-  username: "Jhon Duran",
+  nombre: "Jhon Duran",
   rol: "Estudiante",
   avatarUrl: "",
 };
@@ -18,7 +18,7 @@ describe("UserDropdown /", () => {
   });
 
   test("muestra iniciales si no hay avatar", () => {
-    render(<UserDropdown username="Jhon Duran" rol="User" onLogout={vi.fn()} />);
+    render(<UserDropdown nombre="Jhon Duran" rol="User" onLogout={vi.fn()} />);
     expect(screen.getByText("JD")).toBeInTheDocument();
   });
 

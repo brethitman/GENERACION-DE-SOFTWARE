@@ -9,6 +9,7 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
+import Verificacion from "./pages/Verificacion/Verificacion"; // ✅ Nueva página
 import Roles from "./pages/admi/GestionarRoles";
 import Home from "./pages/home/Home";
 import PanelAdmin from "./pages/panels/PanelAdmin";
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+
         <Route path="/roles" element={<Roles />} />
     <Route
       path="/panel/admin"
@@ -33,7 +35,7 @@ export default function App() {
 
       }
     />
-
+        <Route path="/verificacion" element={<Verificacion />} /> {/* ✅ Nueva ruta */}
 
         {/* Privado */}
         <Route
@@ -52,6 +54,7 @@ export default function App() {
             </RutaPrivada>
           }
         />
+
         <Route
           path="/panel/docente-editor"
           element={

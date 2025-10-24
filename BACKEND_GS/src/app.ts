@@ -34,6 +34,7 @@ app.use(passport.session());
 // Rutas
 app.use("/api/v1/autenticacion", rutasAutenticacion);
 app.use("/api/v1/autenticacion", rutasGoogle);
+
 app.use("/api/v1/usuarios", usuariosRoutes);
 
 // Errores (al final)

@@ -22,4 +22,5 @@ async function ejecutarFilas(texto, parametros) {
     const { rows } = await exports.pool.query(texto, parametros);
     return rows;
 }
+;
 //# sourceMappingURL=db.js.map
