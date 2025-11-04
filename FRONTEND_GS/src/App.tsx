@@ -16,6 +16,7 @@ import PanelAdmin from "./pages/panels/PanelAdmin";
 import PanelDocenteEditor from "./pages/panels/PanelDocenteEditor";
 import PanelDocenteEjecutor from "./pages/panels/PanelDocenteEjecutor";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
+import AdmiVerCurso from "./pages/admi/AdmiVerCurso";
 
 export default function App() {
   return (
@@ -27,6 +28,8 @@ export default function App() {
         <Route path="/registro" element={<Registro />} />
 
         <Route path="/roles" element={<Roles />} />
+        <Route path="/CursoAdmi" element={<AdmiVerCurso />} />
+
     <Route
       path="/panel/admin"
       element={
