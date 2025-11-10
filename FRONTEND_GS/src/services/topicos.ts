@@ -25,7 +25,15 @@ export async function fetchTopicoPorId(idTopico: string): Promise<Topico> {
 
   const data = await res.json();
   if (!data.ok || !data.topico) throw new Error(data.mensaje || "Error al obtener el tópico");
-  return data.topico as Topico;
+
+  const topico = data.topico as Topico;
+
+  // 🔒 Validar que el contenido tenga el formato esperado
+  if (topico.contenido && !Array.isArray(topico.contenido.bloques)) {
+    topico.contenido = { bloques: [] };
+  }
+
+  return topico;
 }
 
 export async function actualizarTopico(

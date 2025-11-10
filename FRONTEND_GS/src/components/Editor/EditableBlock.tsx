@@ -13,6 +13,7 @@ interface Props {
   className?: string;
   onEditorReady?: (editor: Editor) => void;
   onFocus?: () => void;
+  content?: string;
 }
 
 const EditableBlock = forwardRef<EditableBlockHandle, Props>(

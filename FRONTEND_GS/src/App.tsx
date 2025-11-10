@@ -9,8 +9,9 @@ import MainLayout from "./layouts/MainLayout";
 import EditarTopico from "./pages/DocenteEditor/EditarTopico";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
+import VerTopico from "./pages/Topico/VerTopico";
 import Users from "./pages/Users/Users";
-import Verificacion from "./pages/Verificacion/Verificacion"; // ✅ Nueva página
+import Verificacion from "./pages/Verificacion/Verificacion";
 import Roles from "./pages/admi/GestionarRoles";
 import Home from "./pages/home/Home";
 import PanelAdmin from "./pages/panels/PanelAdmin";
@@ -82,6 +83,15 @@ export default function App() {
           element={
             <RutaPrivada>
               <PanelDocenteEjecutor />
+            </RutaPrivada>
+          }
+        />
+
+        <Route
+          path="/ver-topico/:id"
+          element={
+            <RutaPrivada>
+              <VerTopico />
             </RutaPrivada>
           }
         />

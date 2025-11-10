@@ -1,6 +1,7 @@
 // PlantillaBase.tsx
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef, useEffect } from "react";
 
+import type { Bloque } from "../../../types/Topico";
 import type { EditorInstance } from "../../../types/editor";
 import EditableBlock, { type EditableBlockHandle } from "../EditableBlock";
 
@@ -11,18 +12,27 @@ export interface PlantillaBaseHandle {
 interface Props {
   onEditorReady: (editor: EditorInstance, index: number) => void;
   setSelectedBlock: (index: number) => void;
+
+  /** 🔹 Contenido inicial del tópico */
+  bloques?: Bloque[];
 }
 
 const PlantillaBase = forwardRef<PlantillaBaseHandle, Props>(
-  ({ onEditorReady, setSelectedBlock }, ref) => {
+  ({ onEditorReady, setSelectedBlock, bloques }, ref) => {
     const blockRef = useRef<EditableBlockHandle>(null);
 
-    // Permitir que el padre inserte recursos
     useImperativeHandle(ref, () => ({
       insertResourceInBlock(resource) {
         blockRef.current?.insertResource(resource);
       },
     }));
+
+    // Si tienes contenido JSON, se inyecta al montar
+    useEffect(() => {
+      if (bloques && bloques[0]?.html && blockRef.current?.editor) {
+        blockRef.current.editor.commands.setContent(bloques[0].html);
+      }
+    }, [bloques]);
 
     return (
       <div className="h-full w-full">
@@ -30,7 +40,7 @@ const PlantillaBase = forwardRef<PlantillaBaseHandle, Props>(
           ref={blockRef}
           className="h-full"
           onEditorReady={(editor) => {
-            onEditorReady(editor, 0); // siempre índice 0 para la plantilla base
+            onEditorReady(editor, 0);
             setSelectedBlock(0);
           }}
         />
@@ -38,5 +48,6 @@ const PlantillaBase = forwardRef<PlantillaBaseHandle, Props>(
     );
   }
 );
+
 
 export default PlantillaBase;

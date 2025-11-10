@@ -51,21 +51,21 @@ const handleEditorReady = (editor: EditorInstance, index: number) => {
     { key: "ayuda", label: "Ayuda" },
   ] as const;
 
-
-  //- Si tiene contenido JSON, lo inyectamos en el EditorCanvas o en los bloques correspondientes.
 useEffect(() => {
-  if (!topico || !topico.contenido) return;
+  if (!topico?.contenido?.bloques) return;
 
-  // Obtenemos los bloques, si no existen usamos array vacío
-  const bloques = topico.contenido.bloques ?? [];
+  // Verifica si ya se montaron todos los editores
+  const allEditorsReady = Object.keys(editorByBlock).length > 0;
+  if (!allEditorsReady) return;
 
-  bloques.forEach((bloque, i) => {
+  topico.contenido.bloques.forEach((bloque, i) => {
     const editor = editorByBlock[i];
     if (editor && bloque.html) {
       editor.commands.setContent(bloque.html);
     }
   });
 }, [topico, editorByBlock]);
+
 
   return (
     <div className="bg-white shadow-sm h-[calc(100vh-80px)] flex flex-col">
@@ -110,11 +110,12 @@ useEffect(() => {
       )}
 
       {/* --- Canvas del editor --- */}
-      <EditorCanvas
-        selectedLayout={selectedLayout}
-        onEditorReady={handleEditorReady}
-        setSelectedBlock={setSelectedBlock}
-      />
+    <EditorCanvas
+      selectedLayout={selectedLayout}
+      onEditorReady={handleEditorReady}
+      setSelectedBlock={setSelectedBlock}
+      topico={topico} // 👈 agregado
+    />
     </div>
   );
 }
