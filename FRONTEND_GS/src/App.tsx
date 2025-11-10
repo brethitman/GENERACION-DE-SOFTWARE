@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 // ===== Internal =====
 import RutaPrivada from "./components/RutaPrivada/RutaPrivada";
 import MainLayout from "./layouts/MainLayout";
+import EditarTopico from "./pages/DocenteEditor/EditarTopico";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import Users from "./pages/Users/Users";
@@ -27,14 +28,7 @@ export default function App() {
         <Route path="/registro" element={<Registro />} />
 
         <Route path="/roles" element={<Roles />} />
-    <Route
-      path="/panel/admin"
-      element={
 
-          <PanelAdmin />
-
-      }
-    />
         <Route path="/verificacion" element={<Verificacion />} /> {/* ✅ Nueva ruta */}
 
         {/* Privado */}
@@ -46,6 +40,16 @@ export default function App() {
             </RutaPrivada>
           }
         />
+
+        <Route
+           path="/panel/admin"
+            element={
+             <RutaPrivada>
+               <PanelAdmin />
+              </RutaPrivada>
+           }
+       />
+
         <Route
           path="/panel/estudiante"
           element={
@@ -63,6 +67,16 @@ export default function App() {
             </RutaPrivada>
           }
         />
+
+        <Route 
+          path="/editar-topico/:id"
+          element={
+            <RutaPrivada>
+               <EditarTopico />
+            </RutaPrivada>
+          } 
+        />
+
         <Route
           path="/panel/docente-ejecutor"
           element={
