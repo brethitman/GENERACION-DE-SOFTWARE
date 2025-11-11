@@ -8,6 +8,10 @@ const navigate = useNavigate();
   const handleClick = () => {
     navigate("/roles");
   };
+    const handleClickCurso = () => {
+    navigate("/CursoAdmi");
+  };
+
 return (
 <section className="min-h-screen bg-gray-100 flex flex-col">
   <main className="flex flex-wrap gap-8 justify-center items-start px-10 py-8">
@@ -45,17 +49,20 @@ return (
             <p className="text-sm text-gray-600">Descripción del curso...</p>
           </div>
           <div className="flex space-x-3">
-            <button className="ml-auto flex items-center text-[#7E3132] font-medium hover:underline">
-              Ver Curso <FaArrowRight className="ml-1" />
+            <button
+              onClick={handleClickCurso}
+              className="ml-auto flex items-center text-[#7E3132] font-medium hover:underline"
+              >
+                Ver Curso <FaArrowRight className="ml-1" />
             </button>
           </div>
         </div>
         <div className="flex justify-center gap-15 mt-6"> 
           <button className="bg-[#7E3132] text-white rounded-md px-6 py-2 hover:bg-[#6c2b2c] transition"> 
-            Agregar Curso 
+            Capturar Curso 
           </button> 
           <button className="bg-[#2b2b2b] text-white rounded-md px-6 py-2 hover:bg-[#1f1f1f] transition"> 
-            Ver Cursos Archivados 
+            Ver Historial Cursos  
           </button> 
         </div>
       </div>

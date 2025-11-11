@@ -5,7 +5,7 @@ import { rutaPorRol, type Rol } from "../../utils/rutaPorRol";
 
 // type guard para validar rol
 const isRol = (x: string): x is Rol =>
-  ["estudiante", "docente", "administrador"].includes(x);
+  ["estudiante", "editor", "ejecutor", "administrador"].includes(x);
 
 export function RutaProtegida() {
   const { cargandoAuth, estaAutenticado } = useAuth();

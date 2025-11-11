@@ -23,9 +23,9 @@ export default function MainLayout() {
       <main className="flex-1 w-full px-4 py-6">
         <Outlet />
       </main>
-      <footer className="border-t py-4 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} Plataforma Educativa
-      </footer>
+     {/* <footer className="border-t py-4 text-center text-xs text-gray-500">*/}
+      {/*  © {new Date().getFullYear()} Plataforma Educativa
+      </footer>*/}
     </div>
   );
 
