@@ -1,5 +1,6 @@
-import  plantilla1  from '../../assets/plantilla1.png';
-import  plantilla2  from '../../assets/plantilla2.png';
+import { useState } from "react";
+import { FaSquareFull } from "react-icons/fa";
+import { TfiLayoutColumn2Alt } from "react-icons/tfi";
 
 interface Props {
   onSelectLayout: (layoutId: number) => void;
@@ -7,28 +8,37 @@ interface Props {
 
 export default function SubMenuPlantillas({ onSelectLayout }: Props) {
   const plantillas = [
-    { id: 1, img: plantilla1 },
-    { id: 2, img: plantilla2 },
+    { id: 0, icon: FaSquareFull },
+    { id: 1, icon: TfiLayoutColumn2Alt },
   ];
 
+  const [activo, setActivo] = useState<number>(0);
+
+  const handleClick = (id: number) => {
+    setActivo(id);           
+    onSelectLayout(id);      
+  };
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-1">
-      {plantillas.map((p) => (
-        <button
-          key={p.id}
-          onClick={() => onSelectLayout(p.id)}
-          className="flex flex-col items-center justify-center
-      w-20 h-20 p-2 border-1 border-[#7E3132] rounded-lg hover:bg-stone-100"
-        >
-          <img
-            src={p.img}
-            alt={`Plantilla ${p.id}`}
-           className="w-full h-full object-cover rounded-lg"
-          />
-        </button>
-      ))}
+    <div className="flex gap-2 p-2">
+      {plantillas.map((p) => {
+        const IconComponent = p.icon;
+        const isActive = p.id === activo; // verifica si es el botón activo
+        return (
+          <button
+            key={p.id}
+            onClick={() => handleClick(p.id)}
+            className={`flex items-center justify-center
+                        w-20 h-20 p-2 border rounded-lg transition
+                        ${isActive ? "border-[#7E3132] text-[#7E3132] shadow-lg" : "border-stone-700 hover:bg-stone-100 text-stone-700"}`}
+          >
+            <IconComponent className="w-10 h-10" />
+          </button>
+        );
+      })}
     </div>
   );
 }
+
 
 

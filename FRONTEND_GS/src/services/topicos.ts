@@ -1,19 +1,13 @@
-import type { ContenidoTopico } from "../types/Topico";
-
-export type Topico = {
-  id: string;
-  idCurso: string;
-  titulo: string;
-  contenido?: ContenidoTopico;
-  orden: number;
-  creadoEn: string;
-};
+import type { Topico } from "../types/Topico";
 
 export async function fetchTopicos(): Promise<Topico[]> {
   const res = await fetch("http://localhost:3000/topicos");
   if (!res.ok) throw new Error("Error al obtener los tópicos");
   const data = await res.json();
-  return data.topicos;
+  return data.topicos.map((t: Topico) => ({
+    ...t,
+    contenido: t.contenido ?? { bloques: [] }, // 🔹 asegurar contenido
+  }));
 }
 
 export async function fetchTopicoPorId(idTopico: string): Promise<Topico> {
@@ -27,13 +21,10 @@ export async function fetchTopicoPorId(idTopico: string): Promise<Topico> {
   if (!data.ok || !data.topico) throw new Error(data.mensaje || "Error al obtener el tópico");
 
   const topico = data.topico as Topico;
-
-  // 🔒 Validar que el contenido tenga el formato esperado
-  if (topico.contenido && !Array.isArray(topico.contenido.bloques)) {
-    topico.contenido = { bloques: [] };
-  }
-
-  return topico;
+  return {
+    ...topico,
+    contenido: topico.contenido ?? { bloques: [] }, // 🔹 siempre definido
+  };
 }
 
 export async function actualizarTopico(
@@ -54,5 +45,9 @@ export async function actualizarTopico(
   const data = await res.json();
   if (!data.ok || !data.topico) throw new Error(data.mensaje || "Error al actualizar el tópico");
 
-  return data.topico;
+  const topico = data.topico as Topico;
+  return {
+    ...topico,
+    contenido: topico.contenido ?? { bloques: [] }, // 🔹 asegurar contenido
+  };
 }

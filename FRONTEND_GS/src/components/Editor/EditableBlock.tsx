@@ -1,4 +1,5 @@
 import Color from "@tiptap/extension-color";
+import Image from '@tiptap/extension-image';
 import { TextStyle } from "@tiptap/extension-text-style";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -19,7 +20,7 @@ interface Props {
 const EditableBlock = forwardRef<EditableBlockHandle, Props>(
   ({ className, onEditorReady, onFocus }, ref) => {
     const editor = useEditor({
-      extensions: [StarterKit, TextStyle, Color],
+      extensions: [StarterKit, TextStyle, Color, Image],
       content: "",
       editorProps: {
         attributes: {
@@ -44,13 +45,13 @@ const EditableBlock = forwardRef<EditableBlockHandle, Props>(
 
     useImperativeHandle(ref, () => ({
       insertResource(resource) {
-        if (!editor) return;
+  if (!editor) return;
 
-        if (resource.type === "image") {
-          editor.commands.insertContent(`<img src="${resource.content}" alt="imagen" />`);
-        } else {
-          editor.commands.insertContent(resource.content);
-        }
+  if (resource.type === "image") {
+    editor.commands.setImage({ src: resource.content, alt: "imagen" });
+  } else {
+    editor.commands.insertContent(resource.content);
+  }
       },
       editor,
     }));
