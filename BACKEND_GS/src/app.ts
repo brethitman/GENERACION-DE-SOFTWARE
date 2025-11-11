@@ -9,6 +9,7 @@ import passport from "./config/passport.google";
 import { manejadorErrores } from "./middlewares/error.middleware";
 import rutasAutenticacion from "./routes/autenticacion.routes";
 import rutasGoogle from "./routes/google.routes";
+import topicosRoutes from "./routes/topicos.routes";
 import usuariosRoutes from "./routes/usuarios.routes";
 
 const app = express();
@@ -36,6 +37,8 @@ app.use("/api/v1/autenticacion", rutasAutenticacion);
 app.use("/api/v1/autenticacion", rutasGoogle);
 
 app.use("/api/v1/usuarios", usuariosRoutes);
+
+app.use("/topicos", topicosRoutes);
 
 // Errores (al final)
 app.use(manejadorErrores);
