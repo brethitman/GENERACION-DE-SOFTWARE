@@ -8,6 +8,7 @@ import morgan from "morgan";
 import passport from "./config/passport.google";
 import { manejadorErrores } from "./middlewares/error.middleware";
 import rutasAutenticacion from "./routes/autenticacion.routes";
+import cloudinaryRoutes from "./routes/cloudinary.routes";
 import rutasGoogle from "./routes/google.routes";
 import topicosRoutes from "./routes/topicos.routes";
 import usuariosRoutes from "./routes/usuarios.routes";
@@ -42,5 +43,8 @@ app.use("/topicos", topicosRoutes);
 
 // Errores (al final)
 app.use(manejadorErrores);
+
+//para subir imgs
+app.use("/api/cloudinary", cloudinaryRoutes);
 
 export default app;

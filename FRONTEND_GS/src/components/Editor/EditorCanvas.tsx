@@ -1,7 +1,7 @@
+import type { Editor } from '@tiptap/react';
 import { forwardRef } from "react";
 
 import type { Topico } from "../../types/Topico";
-import type { EditorInstance } from "../../types/editor";
 
 import Plantilla1 from "./Plantillas/Plantilla1";
 import type { Plantilla1Handle } from "./Plantillas/Plantilla1";
@@ -10,17 +10,25 @@ import type { PlantillaBaseHandle } from "./Plantillas/PlantillaBase";
 
 interface Props {
   selectedLayout: number | null;
-  onEditorReady: (editor: EditorInstance, index: number) => void;
+  onEditorReady: (editor: Editor, index: number) => void;  // ✅ usar Editor
   setSelectedBlock: (index: number) => void;
-  topico?: Topico; // 👈 nuevo prop
+  topico?: Topico;
 }
 
 const EditorCanvas = forwardRef<PlantillaBaseHandle | Plantilla1Handle, Props>(
   ({ selectedLayout, onEditorReady, setSelectedBlock, topico }, ref) => {
-    const bloques = topico?.contenido?.bloques ?? []; // 👈 definimos “bloques”
+    const bloques = topico?.contenido?.bloques ?? [];
 
     const renderLayout = () => {
       switch (selectedLayout) {
+        case 0:
+          return (
+            <PlantillaBase
+              ref={ref as React.Ref<PlantillaBaseHandle>}
+              onEditorReady={onEditorReady}
+              setSelectedBlock={setSelectedBlock}
+            />
+          );
         case 1:
           return (
             <Plantilla1
@@ -35,7 +43,7 @@ const EditorCanvas = forwardRef<PlantillaBaseHandle | Plantilla1Handle, Props>(
               ref={ref as React.Ref<PlantillaBaseHandle>}
               onEditorReady={onEditorReady}
               setSelectedBlock={setSelectedBlock}
-              bloques={bloques} // ✅ ahora sí existe
+              bloques={bloques}
             />
           );
       }

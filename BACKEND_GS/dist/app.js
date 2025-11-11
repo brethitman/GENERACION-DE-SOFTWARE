@@ -12,9 +12,10 @@ const morgan_1 = __importDefault(require("morgan"));
 const passport_google_1 = __importDefault(require("./config/passport.google"));
 const error_middleware_1 = require("./middlewares/error.middleware");
 const autenticacion_routes_1 = __importDefault(require("./routes/autenticacion.routes"));
+const cloudinary_routes_1 = __importDefault(require("./routes/cloudinary.routes"));
 const google_routes_1 = __importDefault(require("./routes/google.routes"));
-const usuarios_routes_1 = __importDefault(require("./routes/usuarios.routes"));
 const topicos_routes_1 = __importDefault(require("./routes/topicos.routes"));
+const usuarios_routes_1 = __importDefault(require("./routes/usuarios.routes"));
 const app = (0, express_1.default)();
 // CORS (habilita cookies si luego las usas)
 app.use((0, cors_1.default)({ origin: ["http://localhost:5173"], credentials: true }));
@@ -36,5 +37,7 @@ app.use("/api/v1/usuarios", usuarios_routes_1.default);
 app.use("/topicos", topicos_routes_1.default);
 // Errores (al final)
 app.use(error_middleware_1.manejadorErrores);
+//para subir imgs
+app.use("/api/cloudinary", cloudinary_routes_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

@@ -1,6 +1,6 @@
+import type { Editor } from '@tiptap/react';
 import { forwardRef, useImperativeHandle, useRef } from "react";
 
-import type { EditorInstance } from "../../../types/editor";
 import EditableBlock, { type EditableBlockHandle } from "../EditableBlock";
 
 export interface Plantilla1Handle {
@@ -11,7 +11,7 @@ export interface Plantilla1Handle {
 }
 
 interface Props {
-  onEditorReady: (editor: EditorInstance, index: number) => void;
+  onEditorReady: (editor: Editor, index: number) => void;
   setSelectedBlock: (index: number) => void;
 }
 

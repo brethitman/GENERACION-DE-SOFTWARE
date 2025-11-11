@@ -1,8 +1,8 @@
 // PlantillaBase.tsx
+import type { Editor } from '@tiptap/react';
 import { forwardRef, useImperativeHandle, useRef, useEffect } from "react";
 
 import type { Bloque } from "../../../types/Topico";
-import type { EditorInstance } from "../../../types/editor";
 import EditableBlock, { type EditableBlockHandle } from "../EditableBlock";
 
 export interface PlantillaBaseHandle {
@@ -10,7 +10,7 @@ export interface PlantillaBaseHandle {
 }
 
 interface Props {
-  onEditorReady: (editor: EditorInstance, index: number) => void;
+  onEditorReady: (editor: Editor, index: number) => void;
   setSelectedBlock: (index: number) => void;
 
   /** 🔹 Contenido inicial del tópico */

@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { CiMail } from "react-icons/ci";
 import { MdOutlineTopic } from "react-icons/md";
 import { TbClipboardHeart, TbClipboardCheck } from "react-icons/tb";
+import { Link } from "react-router-dom";
 
 import userdefect from "../../assets/userdefect.png";
 import Modal from "../../components/Modal/Modal";
 import CrearTopicoModal from "../../components/ModalTopico/ModalTopico";
 import { useAuth } from "../../hooks/useAuth";
-import type { Topico } from "../../services/topicos";
 import { fetchTopicos } from "../../services/topicos";
+import type { Topico } from "../../types/Topico";
 
 
 export default function PanelDocenteEditor() {
@@ -120,10 +121,15 @@ export default function PanelDocenteEditor() {
                 ) : (
                   <ul className="mt-4 space-y-1">
                     {topicos.map((t) => (
-                      <li key={t.id} className="text-gray-700">
-                        {t.orden}. {t.titulo}
-                      </li>
-                    ))}
+                  <li key={t.id}>
+                    <Link
+                       to={`/editar-topico/${t.id}`}
+                        className="block text-gray-700 hover:text-[#7E3132] font-medium hover:underline transition"
+                     >
+                   {t.orden}. {t.titulo}
+                     </Link>
+                  </li>
+                   ))}
                   </ul>
                 )}
               </div>
