@@ -5,6 +5,7 @@ import { fetchTopicoPorId } from "../../services/topicos";
 import type { Bloque } from "../../types/Topico";
 
 import BloqueSoloLectura from "./BloqueSoloLectura";
+import ComentariosPanel from "../../components/Comentario/comentario";
 
 interface TopicoConId {
   titulo: string;
@@ -42,6 +43,7 @@ export default function VerTopico() {
           <BloqueSoloLectura key={i} bloque={bloque} />
         ))}
       </div>
+        <ComentariosPanel />
     </div>
   );
 }
