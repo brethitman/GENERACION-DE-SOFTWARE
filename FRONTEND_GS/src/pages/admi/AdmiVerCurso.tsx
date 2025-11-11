@@ -1,32 +1,60 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
+// Tipado de datos
+interface Topico {
+  id: number;
+  titulo: string;
+}
+
+interface Docente {
+  id: number;
+  nombre: string;
+  rol: string;
+}
+
+interface Curso {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  topicos: Topico[];
+}
 
 export default function CursoPanel() {
   const navigate = useNavigate();
   const [editEnabled, setEditEnabled] = useState(false);
-  const [curso, setCurso] = useState<any>(null);
-  const [docentes, setDocentes] = useState<any[]>([]);
+  const [curso, setCurso] = useState<Curso | null>(null);
+  const [docentes, setDocentes] = useState<Docente[]>([]);
 
   useEffect(() => {
     // Obtener curso con tópicos
-    fetch("http://localhost:3000/api/v1/cursos/1/topicos")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchCurso = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/v1/cursos/1/topicos");
+        const data = await res.json();
         if (data.ok) setCurso(data.curso);
-      })
-      .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
     // Obtener usuarios con rol "editor"
-    fetch("http://localhost:3000/api/v1/usuarios")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchUsuarios = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/v1/usuarios");
+        const data = await res.json();
         if (data.ok) {
-          const editores = data.usuarios.filter((u: any) => u.rol === "editor");
+          const editores: Docente[] = data.usuarios.filter((u: Docente) => u.rol === "editor");
           setDocentes(editores);
         }
-      })
-      .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchCurso();
+    fetchUsuarios();
   }, []);
 
   const handleClick = () => {
@@ -50,16 +78,12 @@ export default function CursoPanel() {
       <div className="flex justify-between items-start mb-10">
         <div>
           <h2 className="text-sm font-semibold text-gray-800">CURSO</h2>
-          <h1 className="text-2xl font-bold text-[#7E3132] uppercase">
-            {curso.titulo}
-          </h1>
+          <h1 className="text-2xl font-bold text-[#7E3132] uppercase">{curso.titulo}</h1>
           <p className="text-sm text-gray-600 mt-1">{curso.descripcion}</p>
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold text-gray-800 mb-2">
-            DOCENTES EDITORES
-          </h2>
+          <h2 className="text-sm font-semibold text-gray-800 mb-2">DOCENTES EDITORES</h2>
           <div className="flex gap-2">
             <button
               className={`px-4 py-1 rounded-md text-sm font-semibold transition ${
@@ -89,11 +113,8 @@ export default function CursoPanel() {
         <div className="bg-white rounded-2xl shadow-md border border-gray-300 p-6 w-2/3 min-h-[320px]">
           <h3 className="font-semibold text-gray-800 mb-3">TÓPICOS</h3>
           <ul className="space-y-2 text-sm text-gray-700">
-            {curso.topicos.map((t: any) => (
-              <li
-                key={t.id}
-                className="border-b border-gray-200 pb-1 last:border-none"
-              >
+            {curso.topicos.map((t: Topico) => (
+              <li key={t.id} className="border-b border-gray-200 pb-1 last:border-none">
                 {t.titulo}
               </li>
             ))}
@@ -101,11 +122,9 @@ export default function CursoPanel() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-md border border-gray-300 p-6 w-1/3 min-h-[320px]">
-          <h3 className="font-semibold text-gray-800 mb-3">
-            DOCENTES EDITORES
-          </h3>
+          <h3 className="font-semibold text-gray-800 mb-3">DOCENTES EDITORES</h3>
           <ul className="space-y-2 text-sm text-gray-700">
-            {docentes.map((d) => (
+            {docentes.map((d: Docente) => (
               <li key={d.id} className="border-b border-gray-200 pb-1 last:border-none">
                 {d.nombre}
               </li>
