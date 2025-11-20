@@ -3,12 +3,12 @@ import cors from "cors";
 import express from "express";
 import session from "express-session";
 import morgan from "morgan";
+import passport from "passport"; // Importa Passport
 
 // ===== Internos =====
-import passport from "./config/passport.google";
 import { manejadorErrores } from "./middlewares/error.middleware";
 import rutasAutenticacion from "./routes/autenticacion.routes";
-import rutasGoogle from "./routes/google.routes";
+import "./infrastructure/passport-google"; // Importa la configuración de Passport para Google
 
 const app = express();
 
@@ -26,13 +26,11 @@ app.use(
   })
 );
 
-// 🔐 Passport SIEMPRE después de session
-app.use(passport.initialize());
-app.use(passport.session());
+// Inicializa Passport
+app.use(passport.initialize()); // ✅ Asegúrate de inicializar Passport
 
 // Rutas
 app.use("/api/v1/autenticacion", rutasAutenticacion);
-app.use("/api/v1/autenticacion", rutasGoogle);
 
 // Errores (al final)
 app.use(manejadorErrores);
