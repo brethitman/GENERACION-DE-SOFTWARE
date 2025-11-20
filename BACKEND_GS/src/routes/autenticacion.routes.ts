@@ -1,10 +1,11 @@
+// src/routes/autenticacion.routes.ts
 import { Router } from "express";
 import passport from "passport";
 
 import { iniciarSesion } from "../controllers/autenticacion.controller";
 import { registrarUsuario } from "../controllers/registro.controller";
 import { validarRegistro } from "../middlewares/validacion.middleware";
-import { GoogleUserPayload } from "../types/google-oauth.types"; // ✅ Importa el tipo
+import { GoogleUserPayload } from "../types/google-oauth.types";
 
 const router = Router();
 
@@ -32,22 +33,19 @@ router.get(
       });
     }
 
-    const { usuario, token } = req.user as GoogleUserPayload; // ✅ Ahora sí reconoce el tipo
+    const { usuario, token } = req.user as GoogleUserPayload;
 
-    // Respuesta JSON
-    res.status(200).json({
-      ok: true,
-      mensaje: "Inicio de sesión con Google exitoso",
-      datos: {
-        usuario: {
-          id: String(usuario.id_usuario),
-          nombre: usuario.nombre_completo,
-          correo: usuario.correo,
-          rol: usuario.rol,
-        },
-        token,
-      },
-    });
+    // Redirige al frontend con los datos en la URL
+    const frontendCallbackUrl = new URL('http://localhost:5173/auth/google-success');
+    frontendCallbackUrl.searchParams.set('token', token);
+    frontendCallbackUrl.searchParams.set('usuario', encodeURIComponent(JSON.stringify({
+      id: String(usuario.id_usuario),
+      nombre: usuario.nombre_completo,
+      correo: usuario.correo,
+      rol: usuario.rol,
+    })));
+
+    res.redirect(frontendCallbackUrl.toString());
   }
 );
 

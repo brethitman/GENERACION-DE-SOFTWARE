@@ -1,3 +1,4 @@
+//src\utils\rutaPorRol.ts
 export type Rol = "estudiante" | "docente" | "administrador";
 
 export const rutaPorRol = (rol?: string) => {
