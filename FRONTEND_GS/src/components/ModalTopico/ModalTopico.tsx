@@ -93,7 +93,7 @@ const handleSubmit = async () => {
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
         <label className="block mb-3">
-          <span className="block text-sm font-medium text-stone-700">Título del tópico</span>
+          <label className="text-sm font-semibold text-gray-600">Nombre del Topico</label>
           <input
             type="text"
             className="w-full border rounded px-2 py-1 mt-1 focus:ring-2 focus:ring-blue-400"
@@ -103,9 +103,7 @@ const handleSubmit = async () => {
         </label>
 
         <label className="block mb-4">
-          <span className="block text-sm font-medium text-stone-700">
-            Insertar después de:
-          </span>
+          <label className="text-sm font-semibold text-gray-600">Insertar despues de:</label>
           <select
             className="w-full border rounded px-2 py-1 mt-1"
             value={afterTopicoId ?? ""}

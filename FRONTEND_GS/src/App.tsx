@@ -12,13 +12,13 @@ import Registro from "./pages/Registro/Registro";
 import VerTopico from "./pages/Topico/VerTopico";
 import Users from "./pages/Users/Users";
 import Verificacion from "./pages/Verificacion/Verificacion";
+import AdmiVerCurso from "./pages/admi/AdmiVerCurso";
 import Roles from "./pages/admi/GestionarRoles";
 import Home from "./pages/home/Home";
 import PanelAdmin from "./pages/panels/PanelAdmin";
 import PanelDocenteEditor from "./pages/panels/PanelDocenteEditor";
 import PanelDocenteEjecutor from "./pages/panels/PanelDocenteEjecutor";
 import PanelEstudiante from "./pages/panels/PanelEstudiante";
-import AdmiVerCurso from "./pages/admi/AdmiVerCurso";
 
 export default function App() {
   return (

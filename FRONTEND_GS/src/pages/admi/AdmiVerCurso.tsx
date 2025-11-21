@@ -1,33 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
+import type { Curso } from "../../types/Curso";
+import type { Topico } from "../../types/Topico";
+import type { UsuarioPublico } from "../../types/Usuario";
 
 export default function CursoPanel() {
   const navigate = useNavigate();
   const [editEnabled, setEditEnabled] = useState(false);
-  const [curso, setCurso] = useState<any>(null);
-  const [docentes, setDocentes] = useState<any[]>([]);
+  const [curso, setCurso] = useState<Curso | null>(null);
+  const [docentes, setDocentes] = useState<UsuarioPublico[]>([]);
 
   useEffect(() => {
-    // Obtener curso con tópicos
-    fetch("http://localhost:3000/api/v1/cursos/1/topicos")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok) setCurso(data.curso);
-      })
-      .catch((err) => console.error(err));
+  // Obtener curso con tópicos
+  fetch("http://localhost:3000/api/v1/cursos/1/topicos")
+    .then((res) => res.json())
+    .then((data: { ok: boolean; curso: Curso }) => {
+      if (data.ok) setCurso(data.curso);
+    })
+    .catch((err) => console.error(err));
 
-    // Obtener usuarios con rol "editor"
-    fetch("http://localhost:3000/api/v1/usuarios")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok) {
-          const editores = data.usuarios.filter((u: any) => u.rol === "editor");
-          setDocentes(editores);
-        }
-      })
-      .catch((err) => console.error(err));
+  // Obtener usuarios con rol "editor"
+  fetch("http://localhost:3000/api/v1/usuarios")
+    .then((res) => res.json())
+    .then((data: { ok: boolean; usuarios: UsuarioPublico[] }) => {
+      if (data.ok) {
+        const editores = data.usuarios.filter((u) => u.rol === "editor");
+        setDocentes(editores);
+      }
+    })
+    .catch((err) => console.error(err));
   }, []);
+
 
   const handleClick = () => {
     navigate("/panel/admin");
@@ -89,7 +94,7 @@ export default function CursoPanel() {
         <div className="bg-white rounded-2xl shadow-md border border-gray-300 p-6 w-2/3 min-h-[320px]">
           <h3 className="font-semibold text-gray-800 mb-3">TÓPICOS</h3>
           <ul className="space-y-2 text-sm text-gray-700">
-            {curso.topicos.map((t: any) => (
+            {curso.topicos?.map((t: Topico) => (
               <li
                 key={t.id}
                 className="border-b border-gray-200 pb-1 last:border-none"
