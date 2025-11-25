@@ -1,11 +1,9 @@
 // components/RutaPrivada/RutaPrivada.tsx
 
-// ===== External =====
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
-// ===== Internal =====
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/auth-context";  
 
 type Props = { children: ReactNode };
 
@@ -13,14 +11,14 @@ export default function RutaPrivada({ children }: Props) {
   const location = useLocation();
   const { cargandoAuth, estaAutenticado } = useAuth();
 
-  // Mientras hidratamos (lee localStorage en el provider), no pintes nada
+  // Mientras hidratamos auth, no mostramos nada
   if (cargandoAuth) return null;
 
-  // Si no está autenticado, manda a /login y recuerda desde dónde venía
+  // Si no está autenticado → enviar al login
   if (!estaAutenticado) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // Autenticado: renderiza el contenido protegido
+  // Todo OK → render protegido
   return <>{children}</>;
 }

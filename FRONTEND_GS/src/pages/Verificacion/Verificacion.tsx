@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { CiMail } from "react-icons/ci";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/auth-context";
 
 export default function Verificacion() {
   const [codigo, setCodigo] = useState(["", "", "", "", "", ""]);

@@ -1,16 +1,9 @@
-
 import { createContext, useContext } from "react";
 
 import type { UsuarioPublico } from "../types/Usuario";
 
 export type Credenciales = { correo: string; contrasena: string };
 
-export type EstadoAuth = {
-  usuario: UsuarioPublico | null;
-  token: string | null;
-};
-
-// ✅ NUEVO: Tipo para respuesta de login con verificación
 export type RespuestaLogin = {
   ok: boolean;
   mensaje: string;
@@ -22,14 +15,19 @@ export type RespuestaLogin = {
   };
 };
 
+export type EstadoAuth = {
+  usuario: UsuarioPublico | null;
+  token: string | null;
+};
+
 export type Ctx = {
   usuario: UsuarioPublico | null;
   token: string | null;
   estaAutenticado: boolean;
   cargandoAuth: boolean;
-  iniciarSesion: (cred: Credenciales) => Promise<RespuestaLogin>; // ✅ Cambiar el tipo de retorno
-  verificarCodigo: (usuarioId: number, codigo: string) => Promise<void>; // ✅ AGREGAR ESTA LÍNEA
-  reenviarCodigo: (usuarioId: number) => Promise<void>; // ✅ AGREGAR ESTA LÍNEA
+  iniciarSesion: (cred: Credenciales) => Promise<RespuestaLogin>;
+  verificarCodigo: (id: number, codigo: string) => Promise<void>;
+  reenviarCodigo: (id: number) => Promise<void>;
   cerrarSesion: () => void;
 };
 
@@ -39,10 +37,10 @@ export const AuthContext = createContext<Ctx>({
   estaAutenticado: false,
   cargandoAuth: true,
 
-  iniciarSesion: async () => Promise.resolve({} as RespuestaLogin), // ✅ Cambiar el tipo
-  verificarCodigo: async () => Promise.resolve(), // ✅ AGREGAR ESTA LÍNEA
-  reenviarCodigo: async () => Promise.resolve(), // ✅ AGREGAR ESTA LÍNEA
-  cerrarSesion: () => {},
+  iniciarSesion: async () => ({ ok: false, mensaje: "" }),
+  verificarCodigo: async () => Promise.resolve(),
+  reenviarCodigo: async () => Promise.resolve(),
+  cerrarSesion: () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);

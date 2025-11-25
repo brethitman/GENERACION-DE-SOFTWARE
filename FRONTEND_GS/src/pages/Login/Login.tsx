@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import {CiMail, CiLock} from 'react-icons/ci';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {FcGoogle} from 'react-icons/fc';
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/auth-context";
 import { rutaPorRol } from "../../utils/rutaPorRol";
+
 
 export default function Login() {
   const [correo, setCorreo] = useState("");
@@ -18,6 +20,31 @@ export default function Login() {
   const navigate = useNavigate();
   const { iniciarSesion } = useAuth();
 
+  // 🔥 Capturar login con Google
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const token = params.get("token");
+    const nombre = params.get("nombre");
+    const correo = params.get("correo");
+
+    if (token && nombre && correo) {
+      const usuario = {
+        nombre,
+        correo,
+        rol: "estudiante", // Google crea estudiante por defecto
+      };
+
+      // Guardar en localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+
+      // Forzar guardado en estado del AuthProvider
+      window.location.href = rutaPorRol(usuario.rol);
+    }
+  }, []);
+
+  
   const enviar = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);

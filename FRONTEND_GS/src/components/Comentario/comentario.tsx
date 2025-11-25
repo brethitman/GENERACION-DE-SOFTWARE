@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/auth-context";
 
 interface Comentario {
   autor: string;

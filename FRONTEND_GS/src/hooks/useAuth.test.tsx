@@ -7,7 +7,7 @@ import { MemoryRouter } from "react-router-dom";
 
 // 👇 Importa el proveedor real (AuthProvider) que uses en la app
 import AuthProviderCmp from "../context/AuthProvider";
-import { useAuth } from "./useAuth";
+import { useAuth } from "./useProvideAuth";
 
 // Stub de localStorage tipado (sin any)
 const localStorageStub = {

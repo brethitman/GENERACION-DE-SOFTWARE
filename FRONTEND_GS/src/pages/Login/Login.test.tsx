@@ -1,30 +1,38 @@
 // src/pages/Login/Login.test.tsx
-import { screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, test, vi, afterEach } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
-import { renderWithAuth } from "../../test-utils/renderWithAuth";
-import type { Credenciales } from "../../context/auth-context";
-import type { UsuarioPublico } from "../../types/Usuario";
 import Login from "./Login";
+import type { Credenciales, Ctx, RespuestaLogin } from "../../context/auth-context";
+import type { UsuarioPublico } from "../../types/Usuario";
 
-
-// Mock del hook useAuth para tener control total en cada test
-vi.mock("../../hooks/useAuth", () => {
-  return {
-    useAuth: vi.fn(),
-  };
-});
-import { useAuth as useAuthMocked } from "../../hooks/useAuth";
-
+// Usuario fake para tests
 const USUARIO_FAKE: UsuarioPublico = {
   id: 1,
   nombre: "Ana",
   correo: "ana@a.com",
   rol: "estudiante",
-  activo: false,
-  verificado: false
+  activo: true,
+  verificado: true,
 };
+
+// Mock de useAuth
+const iniciarSesionMock = vi.fn<(cred: Credenciales) => Promise<RespuestaLogin>>();
+
+vi.mock("../../context/auth-context", () => ({
+  useAuth: (): Ctx => ({
+    usuario: USUARIO_FAKE,
+    token: "token-fake",
+    estaAutenticado: true,
+    cargandoAuth: false,
+    iniciarSesion: iniciarSesionMock,
+    verificarCodigo: vi.fn().mockResolvedValue(undefined),
+    reenviarCodigo: vi.fn().mockResolvedValue(undefined),
+    cerrarSesion: vi.fn(),
+  }),
+}));
 
 describe("<Login />", () => {
   afterEach(() => {
@@ -33,75 +41,60 @@ describe("<Login />", () => {
   });
 
   test("renderiza el título", () => {
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
 
-    // Proveer un useAuth por defecto (solo para que el componente no falle)
-    (useAuthMocked as unknown as jest.Mock).mockReturnValue({
-      iniciarSesion: vi.fn(),
-      cargandoAuth: false,
-    });
-
-    renderWithAuth(<Login />, { ctx: { cargandoAuth: false } });
-    expect(screen.getByRole("heading", { name: /iniciar sesión/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /iniciar sesión/i })
+    ).toBeInTheDocument();
   });
 
-  test("muestra campos y permite iniciar sesión", async () => {
-
-    // Mock: iniciarSesion recibe credenciales y devuelve { datos: { usuario } }
-    const iniciarSesionMock = vi
-      .fn<(cred: Credenciales) => Promise<{ datos: { usuario: UsuarioPublico } }>>()
-      .mockResolvedValue({ datos: { usuario: USUARIO_FAKE } });
-
-    (useAuthMocked as unknown as jest.Mock).mockReturnValue({
-      iniciarSesion: iniciarSesionMock,
-      cargandoAuth: false,
-    });
-
-    renderWithAuth(<Login />, {
-      ctx: {
-        cargandoAuth: false,
+  test("permite iniciar sesión con credenciales correctas", async () => {
+    iniciarSesionMock.mockResolvedValueOnce({
+      ok: true,
+      mensaje: "ok",
+      datos: {
+        usuario: USUARIO_FAKE,
+        token: "token-fake",
       },
-      route: "/login",
     });
+
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/correo/i), "a@a.com");
+    await user.type(screen.getByLabelText(/correo/i), "ana@a.com");
     await user.type(screen.getByLabelText(/contraseña/i), "goodpass");
     await user.click(screen.getByRole("button", { name: /ingresar/i }));
+
     await waitFor(() => {
       expect(iniciarSesionMock).toHaveBeenCalledWith({
-        correo: "a@a.com",
+        correo: "ana@a.com",
         contrasena: "goodpass",
       });
     });
   });
 
   test("muestra error si el backend responde 401", async () => {
-    // Mock: iniciarSesion rechaza con Error
-    const iniciarSesionMock = vi
+    iniciarSesionMock.mockRejectedValueOnce(new Error("No se pudo iniciar sesión"));
 
-      .fn<(cred: Credenciales) => Promise<{ datos?: { usuario?: UsuarioPublico } }>>()
-      .mockRejectedValue(new Error("No se pudo iniciar sesión"));
-
-    (useAuthMocked as unknown as jest.Mock).mockReturnValue({
-      iniciarSesion: iniciarSesionMock,
-      cargandoAuth: false,
-    });
-
-    renderWithAuth(<Login />, {
-      ctx: {
-        cargandoAuth: false,
-      },
-      route: "/login",
-    });
-
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/correo/i), "a@a.com");
-    await user.type(screen.getByLabelText(/contraseña/i), "bad");
+    await user.type(screen.getByLabelText(/correo/i), "ana@a.com");
+    await user.type(screen.getByLabelText(/contraseña/i), "badpass");
     await user.click(screen.getByRole("button", { name: /ingresar/i }));
 
-    expect(
-      await screen.findByText(/no se pudo iniciar sesión/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/no se pudo iniciar sesión/i)).toBeInTheDocument();
   });
 });

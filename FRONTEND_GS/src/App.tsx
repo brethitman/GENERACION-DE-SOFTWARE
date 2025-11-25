@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 
 // ===== Internal =====
 import RutaPrivada from "./components/RutaPrivada/RutaPrivada";
+import RutaPrivadaPorRol from "./components/RutaPrivada/RutaPrivadaPorRol";
 import MainLayout from "./layouts/MainLayout";
 import EditarTopico from "./pages/DocenteEditor/EditarTopico";
 import Login from "./pages/Login/Login";
@@ -72,13 +73,13 @@ export default function App() {
           }
         />
 
-        <Route 
+        <Route
           path="/editar-topico/:id"
           element={
-            <RutaPrivada>
-               <EditarTopico />
-            </RutaPrivada>
-          } 
+            <RutaPrivadaPorRol rolesPermitidos={["editor", "administrador"]}>
+              <EditarTopico />
+            </RutaPrivadaPorRol>
+          }
         />
 
         <Route
@@ -93,9 +94,9 @@ export default function App() {
         <Route
           path="/ver-topico/:id"
           element={
-            <RutaPrivada>
+            <RutaPrivadaPorRol rolesPermitidos={["editor", "administrador"]}>
               <VerTopico />
-            </RutaPrivada>
+            </RutaPrivadaPorRol>
           }
         />
         {/* Fallback */}

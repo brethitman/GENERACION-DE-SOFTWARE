@@ -13,6 +13,7 @@ const passport_google_1 = __importDefault(require("./config/passport.google"));
 const error_middleware_1 = require("./middlewares/error.middleware");
 const autenticacion_routes_1 = __importDefault(require("./routes/autenticacion.routes"));
 const cloudinary_routes_1 = __importDefault(require("./routes/cloudinary.routes"));
+const cursos_routes_1 = __importDefault(require("./routes/cursos.routes"));
 const google_routes_1 = __importDefault(require("./routes/google.routes"));
 const topicos_routes_1 = __importDefault(require("./routes/topicos.routes"));
 const usuarios_routes_1 = __importDefault(require("./routes/usuarios.routes"));
@@ -34,7 +35,8 @@ app.use(passport_google_1.default.session());
 app.use("/api/v1/autenticacion", autenticacion_routes_1.default);
 app.use("/api/v1/autenticacion", google_routes_1.default);
 app.use("/api/v1/usuarios", usuarios_routes_1.default);
-app.use("/topicos", topicos_routes_1.default);
+app.use("/api/v1/topicos", topicos_routes_1.default);
+app.use("/api/v1/cursos", cursos_routes_1.default);
 // Errores (al final)
 app.use(error_middleware_1.manejadorErrores);
 //para subir imgs

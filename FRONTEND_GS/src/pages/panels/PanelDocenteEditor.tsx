@@ -9,7 +9,7 @@ import userdefect from "../../assets/userdefect.png";
 import Modal from "../../components/Modal/Modal";
 import EditarCursoModal from "../../components/ModalCurso/ModalCurso";
 import CrearTopicoModal from "../../components/ModalTopico/ModalTopico";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/auth-context";
 import { fetchTopicos } from "../../services/topicos";
 import type { Curso } from "../../types/Curso";
 import type { Topico } from "../../types/Topico";

@@ -1,30 +1,29 @@
-import type { Request, Response, NextFunction } from "express";
+/*import type { Request, Response, NextFunction } from "express";
 import { validationResult, body } from "express-validator";
 import { Pool } from "pg";
 
-/* -------------------------------------------------------------------------- */
-/*  Augmentación de tipos para req.user (sin any)                              */
-/* -------------------------------------------------------------------------- */
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: AuthUser;
+  }
+}
+
 
 export interface AuthUser {
   id: number;
   rol: "admin" | "docente" | "editor" | "estudiante";
 }
 
-declare global {
-  // Extiende la Request de Express para incluir user tipado
-  namespace Express {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    interface Request {
-      user?: AuthUser;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: AuthUser;
   }
 }
 
 /* -------------------------------------------------------------------------- */
 /*  Pool de PostgreSQL                                                         */
 /* -------------------------------------------------------------------------- */
-
+/*
 const pool = new Pool({
   connectionString:
     process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/tu_db",
@@ -33,7 +32,7 @@ const pool = new Pool({
 /* -------------------------------------------------------------------------- */
 /*  Tipos de filas                                                             */
 /* -------------------------------------------------------------------------- */
-
+/*
 interface CommentRecord {
   id: number;
   author_id: number;
@@ -49,7 +48,7 @@ interface CommentRecord {
 /* -------------------------------------------------------------------------- */
 /*  Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
-
+/*
 function requireAuth(req: Request, res: Response): AuthUser | null {
   const u = req.user;
   if (!u || typeof u.id !== "number") {
@@ -66,7 +65,7 @@ function userIsEditor(rol: AuthUser["rol"]): boolean {
 /* -------------------------------------------------------------------------- */
 /*  Validaciones                                                               */
 /* -------------------------------------------------------------------------- */
-
+/*
 export const validarCrearComentario = [
   body("body")
     .isString()
@@ -80,7 +79,7 @@ export const validarCrearComentario = [
 /*  POST /api/v1/comments  (crear comentario)                                  */
 /*  Solo usuarios "editores" pueden comentar                                   */
 /* -------------------------------------------------------------------------- */
-
+/*
 export async function crearComentario(
   req: Request,
   res: Response,
@@ -157,7 +156,7 @@ export async function crearComentario(
 /* -------------------------------------------------------------------------- */
 /*  GET /api/v1/comments/topico/:topicoId  (listar comentarios)                */
 /* -------------------------------------------------------------------------- */
-
+/*
 export async function listarComentariosPorTopico(
   req: Request,
   res: Response,
@@ -199,7 +198,7 @@ export async function listarComentariosPorTopico(
 /* -------------------------------------------------------------------------- */
 /*  DELETE /api/v1/comments/:id  (soft delete: autor o admin)                  */
 /* -------------------------------------------------------------------------- */
-
+/*
 export async function borrarComentario(
   req: Request,
   res: Response,
@@ -275,3 +274,4 @@ export async function borrarComentario(
     next(err);
   }
 }
+  */

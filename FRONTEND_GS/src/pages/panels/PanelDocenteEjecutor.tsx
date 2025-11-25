@@ -2,7 +2,7 @@
 import { CiMail } from "react-icons/ci";
 
 import  userdefect from "../../assets/userdefect.png";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/auth-context";
 
 export default function PanelDocenteEjecutor() {
 const { usuario} = useAuth();

@@ -38,7 +38,7 @@ async function callbackGoogle(req, res) {
             correo: usuario.correo,
         });
         // Redirige al front con token y datos
-        const urlFront = new URL("http://localhost:5173/");
+        const urlFront = new URL("http://localhost:5173/login/");
         urlFront.searchParams.set("token", token);
         urlFront.searchParams.set("nombre", usuario.nombre);
         urlFront.searchParams.set("correo", usuario.correo);

@@ -49,7 +49,7 @@ const handleSubmit = async () => {
 
   setLoading(true);
   try {
-    const res = await fetch("http://localhost:3000/topicos/insertar-despues", {
+    const res = await fetch("http://localhost:3000/api/v1/topicos/insertar-despues", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
