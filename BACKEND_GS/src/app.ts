@@ -9,11 +9,11 @@ import passport from "./config/passport.google";
 import { manejadorErrores } from "./middlewares/error.middleware";
 import rutasAutenticacion from "./routes/autenticacion.routes";
 import cloudinaryRoutes from "./routes/cloudinary.routes";
+import comentariosRoutes from "./routes/comentarios.routes";
 import cursosRoutes from "./routes/cursos.routes";
 import rutasGoogle from "./routes/google.routes";
 import topicosRoutes from "./routes/topicos.routes";
 import usuariosRoutes from "./routes/usuarios.routes";
-import comentariosRoutes from "./routes/comentarios.routes";
 
 const app = express();
 

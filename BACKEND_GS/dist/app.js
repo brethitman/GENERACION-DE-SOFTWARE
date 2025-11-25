@@ -17,6 +17,7 @@ const cursos_routes_1 = __importDefault(require("./routes/cursos.routes"));
 const google_routes_1 = __importDefault(require("./routes/google.routes"));
 const topicos_routes_1 = __importDefault(require("./routes/topicos.routes"));
 const usuarios_routes_1 = __importDefault(require("./routes/usuarios.routes"));
+const comentarios_routes_1 = __importDefault(require("./routes/comentarios.routes"));
 const app = (0, express_1.default)();
 // CORS (habilita cookies si luego las usas)
 app.use((0, cors_1.default)({ origin: ["http://localhost:5173"], credentials: true }));
@@ -37,6 +38,7 @@ app.use("/api/v1/autenticacion", google_routes_1.default);
 app.use("/api/v1/usuarios", usuarios_routes_1.default);
 app.use("/api/v1/topicos", topicos_routes_1.default);
 app.use("/api/v1/cursos", cursos_routes_1.default);
+app.use("/api/v1/comentarios", comentarios_routes_1.default);
 // Errores (al final)
 app.use(error_middleware_1.manejadorErrores);
 //para subir imgs
