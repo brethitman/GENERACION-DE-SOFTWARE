@@ -1,38 +1,83 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/auth-context";
 
 interface Comentario {
+  idComentario: string;
   autor: string;
   texto: string;
   respuestas: { autor: string; texto: string }[];
 }
 
-export default function ComentariosPanel() {
-  const { usuario } = useAuth(); // ✅ obtenemos el usuario actual
+const API_URL = "http://localhost:3000";
+
+export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
+  const { usuario } = useAuth();
   const [comentario, setComentario] = useState<Comentario | null>(null);
   const [nuevoTexto, setNuevoTexto] = useState("");
   const [minimizado, setMinimizado] = useState(false);
 
-  const manejarEnviar = () => {
+  // --------------------------------------------------------
+  // 🔄 Cargar comentario + respuestas del backend
+  // --------------------------------------------------------
+  const cargarComentarios = async () => {
+    const res = await fetch(
+      `${API_URL}/api/v1/comentarios/topicos/${idTopico}/comentarios`
+    );
+    const data = await res.json();
+    setComentario(data.comentario || null);
+  };
+
+  useEffect(() => {
+    cargarComentarios();
+  }, [idTopico]);
+
+  // --------------------------------------------------------
+  // 📨 Enviar comentario o respuesta
+  // --------------------------------------------------------
+  const manejarEnviar = async () => {
     if (!nuevoTexto.trim()) return;
     if (!usuario) return alert("Debes iniciar sesión para comentar.");
 
-    const nuevoComentario = { autor: usuario.nombre, texto: nuevoTexto }; // ✅ usamos el nombre del usuario actual
+    try {
+      if (!comentario) {
+        // Crear comentario principal
+        await fetch(
+          `${API_URL}/api/v1/comentarios/topicos/${idTopico}/comentarios`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              idUsuario: usuario.id,
+              texto: nuevoTexto,
+            }),
+          }
+        );
+      } else {
+        // Crear respuesta al comentario principal
+        await fetch(
+          `${API_URL}/api/v1/comentarios/comentarios/${comentario.idComentario}/respuestas`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              idUsuario: usuario.id,
+              texto: nuevoTexto,
+            }),
+          }
+        );
+      }
 
-    if (!comentario) {
-      // Crear comentario principal
-      setComentario({ ...nuevoComentario, respuestas: [] });
-    } else {
-      // Agregar respuesta
-      setComentario({
-        ...comentario,
-        respuestas: [...comentario.respuestas, nuevoComentario],
-      });
+      setNuevoTexto("");
+      await cargarComentarios(); // Recargar desde la DB
+    } catch (err) {
+      console.error(err);
+      alert("Error al enviar comentario.");
     }
-    setNuevoTexto("");
   };
 
+  // --------------------------------------------------------
+  // RENDER
+  // --------------------------------------------------------
   return (
     <div
       className={`absolute right-0 bg-white shadow-lg border-l border-gray-200 transition-all duration-300 flex flex-col ${
@@ -43,7 +88,7 @@ export default function ComentariosPanel() {
         height: "calc(100vh - 125px)",
       }}
     >
-      {/* Botón de minimizar / expandir */}
+      {/* Minimizar / Expandir */}
       <button
         onClick={() => setMinimizado(!minimizado)}
         className="absolute top-4 left-[-40px] bg-[#7E3132] text-white rounded-l-md px-2 py-1 text-sm hover:bg-[#5b2425]"
@@ -57,6 +102,7 @@ export default function ComentariosPanel() {
             Comentarios
           </h2>
 
+          {/* SIN COMENTARIO AÚN */}
           {!comentario ? (
             <p className="text-gray-500 mb-4">
               No hay comentarios aún. ¡Sé el primero!
@@ -64,12 +110,11 @@ export default function ComentariosPanel() {
           ) : (
             <div className="mb-4">
               <div className="p-3 bg-gray-100 rounded-md mb-2">
-                <strong className="text-[#7E3132]">
-                  {comentario.autor}
-                </strong>
+                <strong className="text-[#7E3132]">{comentario.autor}</strong>
                 <p className="mt-1">{comentario.texto}</p>
               </div>
 
+              {/* RESPUESTAS */}
               {comentario.respuestas.length > 0 && (
                 <div className="ml-3 border-l pl-3 space-y-2">
                   {comentario.respuestas.map((r, i) => (
@@ -95,6 +140,7 @@ export default function ComentariosPanel() {
               }
               className="w-full border rounded-md p-2 text-sm focus:outline-[#7E3132]"
             />
+
             <button
               onClick={manejarEnviar}
               className="mt-2 w-full bg-[#7E3132] text-white py-1 rounded-md hover:bg-[#5b2425]"

@@ -13,6 +13,7 @@ import cursosRoutes from "./routes/cursos.routes";
 import rutasGoogle from "./routes/google.routes";
 import topicosRoutes from "./routes/topicos.routes";
 import usuariosRoutes from "./routes/usuarios.routes";
+import comentariosRoutes from "./routes/comentarios.routes";
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/api/v1/usuarios", usuariosRoutes);
 
 app.use("/api/v1/topicos", topicosRoutes);
 app.use("/api/v1/cursos", cursosRoutes);
+app.use("/api/v1/comentarios", comentariosRoutes);
 
 // Errores (al final)
 app.use(manejadorErrores);

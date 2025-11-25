@@ -43,7 +43,7 @@ export default function VerTopico() {
           <BloqueSoloLectura key={i} bloque={bloque} />
         ))}
       </div>
-        <ComentariosPanel />
+        { id && <ComentariosPanel idTopico={id} /> }
     </div>
   );
 }
