@@ -1,4 +1,4 @@
-
+//C:\Users\Ffcg\Videos\GENERACION_DE_SOFTWARE\FRONTEND_GS\src\layouts\MainLayout.tsx
 import { Outlet } from "react-router-dom";
 
 import Header from "../components/Header/Header";

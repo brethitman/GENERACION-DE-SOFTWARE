@@ -1,3 +1,4 @@
+// src/context/auth-context.ts
 
 import { createContext, useContext } from "react";
 
@@ -10,7 +11,6 @@ export type EstadoAuth = {
   token: string | null;
 };
 
-// ✅ NUEVO: Tipo para respuesta de login con verificación
 export type RespuestaLogin = {
   ok: boolean;
   mensaje: string;
@@ -27,9 +27,16 @@ export type Ctx = {
   token: string | null;
   estaAutenticado: boolean;
   cargandoAuth: boolean;
-  iniciarSesion: (cred: Credenciales) => Promise<RespuestaLogin>; // ✅ Cambiar el tipo de retorno
-  verificarCodigo: (usuarioId: number, codigo: string) => Promise<void>; // ✅ AGREGAR ESTA LÍNEA
-  reenviarCodigo: (usuarioId: number) => Promise<void>; // ✅ AGREGAR ESTA LÍNEA
+
+  iniciarSesion: (cred: Credenciales) => Promise<RespuestaLogin>;
+  verificarCodigo: (usuarioId: number, codigo: string) => Promise<void>;
+  reenviarCodigo: (usuarioId: number) => Promise<void>;
+
+  // ⬅️ AGREGAR ESTO
+  iniciarSesionConGoogle: () => void;
+  setToken: (token: string | null) => void;
+  setUsuario: (usuario: UsuarioPublico | null) => void;
+
   cerrarSesion: () => void;
 };
 
@@ -39,9 +46,15 @@ export const AuthContext = createContext<Ctx>({
   estaAutenticado: false,
   cargandoAuth: true,
 
-  iniciarSesion: async () => Promise.resolve({} as RespuestaLogin), // ✅ Cambiar el tipo
-  verificarCodigo: async () => Promise.resolve(), // ✅ AGREGAR ESTA LÍNEA
-  reenviarCodigo: async () => Promise.resolve(), // ✅ AGREGAR ESTA LÍNEA
+  iniciarSesion: async () => Promise.resolve({} as RespuestaLogin),
+  verificarCodigo: async () => Promise.resolve(),
+  reenviarCodigo: async () => Promise.resolve(),
+
+  // ⬅️ NUEVOS
+  iniciarSesionConGoogle: () => {},
+  setToken: () => {},
+  setUsuario: () => {},
+
   cerrarSesion: () => {},
 });
 

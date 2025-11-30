@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import ComentariosPanel from "../../components/Comentario/comentario";
 import { fetchTopicoPorId } from "../../services/topicos";
 import type { Bloque } from "../../types/Topico";
 
 import BloqueSoloLectura from "./BloqueSoloLectura";
-import ComentariosPanel from "../../components/Comentario/comentario";
 
 interface TopicoConId {
   titulo: string;

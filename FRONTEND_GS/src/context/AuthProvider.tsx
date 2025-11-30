@@ -1,10 +1,6 @@
 // src/context/AuthProvider.tsx
 
-// ===== External =====
-import { useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
-
-// ===== Internal =====
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { setAuthToken } from "../services/api";
 import { autenticarUsuario, verificarCodigo as verificarCodigoAPI, reenviarCodigo as reenviarCodigoAPI } from "../services/auth";
@@ -17,8 +13,6 @@ import {
   type RespuestaLogin,
 } from "./auth-context";
 
-// ✅ Importar servicios de autenticación
-
 export default function ProveedorAuth({ children }: { children: ReactNode }) {
   const [estado, setEstado] = useState<EstadoAuth>({
     usuario: null,
@@ -26,7 +20,7 @@ export default function ProveedorAuth({ children }: { children: ReactNode }) {
   });
   const [cargandoAuth, setCargandoAuth] = useState(true);
 
-  // Hidratar estado inicial desde localStorage al montar
+  // Hidratar localStorage
   useEffect(() => {
     const token = localStorage.getItem("token");
     const uStr = localStorage.getItem("usuario");
@@ -43,37 +37,34 @@ export default function ProveedorAuth({ children }: { children: ReactNode }) {
     setCargandoAuth(false);
   }, []);
 
-  // ✅ Función de inicio de sesión actualizada
   const iniciarSesion = async ({ correo, contrasena }: Credenciales): Promise<RespuestaLogin> => {
     const respuesta = await autenticarUsuario({ correo, contrasena });
-    
-    // ✅ Si requiere verificación, retornamos la respuesta sin guardar en localStorage
-    if (respuesta.requiereVerificacion) {
-      return respuesta;
+
+    if (respuesta.requiereVerificacion) return respuesta;
+
+    if (respuesta.datos) {
+      const { usuario, token } = respuesta.datos;
+      localStorage.setItem("token", token);
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+      setAuthToken(token);
+      setEstado({ token, usuario });
     }
 
-    // ✅ Si está verificado, procedemos normalmente
-    if (respuesta.datos) {
-      const { usuario: usuarioData, token: tokenData } = respuesta.datos;
-      
-      localStorage.setItem("token", tokenData);
-      localStorage.setItem("usuario", JSON.stringify(usuarioData));
-      setAuthToken(tokenData);
-      setEstado({ token: tokenData, usuario: usuarioData });
-    }
-    
     return respuesta;
   };
 
-  // ✅ Función para verificar código
   const verificarCodigo = async (usuarioId: number, codigo: string): Promise<void> => {
     await verificarCodigoAPI(usuarioId, codigo);
   };
 
-  // ✅ Función para reenviar código
   const reenviarCodigo = async (usuarioId: number): Promise<void> => {
-  await reenviarCodigoAPI(usuarioId);
-};
+    await reenviarCodigoAPI(usuarioId);
+  };
+
+  // ⬅️ LOGIN CON GOOGLE
+  const iniciarSesionConGoogle = () => {
+    window.location.href = "http://localhost:3000/api/v1/autenticacion/google";
+  };
 
   const cerrarSesion = () => {
     localStorage.removeItem("token");
@@ -82,21 +73,34 @@ export default function ProveedorAuth({ children }: { children: ReactNode }) {
     setEstado({ token: null, usuario: null });
   };
 
-  // ✅ Value actualizado con todas las funciones
+  // ⬅️ PARA GOOGLE CALLBACK
+  const setToken = (token: string | null) => {
+    setEstado(prev => ({ ...prev, token }));
+  };
+
+  const setUsuario = (usuario: UsuarioPublico | null) => {
+    setEstado(prev => ({ ...prev, usuario }));
+  };
+
   const value = useMemo(
     () => ({
       usuario: estado.usuario,
       token: estado.token,
       estaAutenticado: Boolean(estado.token),
       cargandoAuth,
+
       iniciarSesion,
       verificarCodigo,
       reenviarCodigo,
+      iniciarSesionConGoogle,
+
       cerrarSesion,
+
+      setToken,     // ⬅️ requerido por GoogleCallback
+      setUsuario,   // ⬅️ requerido por GoogleCallback
     }),
     [estado, cargandoAuth]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-
 }

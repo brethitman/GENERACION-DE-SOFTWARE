@@ -1,4 +1,5 @@
 import { pool } from "../infrastructure/db";
+
 import { Topico } from "./topico.repo";
 
 export type Curso = {

@@ -1,3 +1,4 @@
+//C:\Users\Ffcg\Videos\GENERACION_DE_SOFTWARE\FRONTEND_GS\src\pages\Login\Login.tsx
 import { useState } from "react";
 import {CiMail, CiLock} from 'react-icons/ci';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
