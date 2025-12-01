@@ -1,3 +1,4 @@
+//C:\Users\Ffcg\Videos\copi_google\GENERACION_DE_SOFTWARE\BACKEND_GS\src\types\passport-google-oidc.d.ts
 declare module "passport-google-oidc" {
   import type { Profile } from "passport";
   import { Strategy as PassportStrategy } from "passport-strategy";

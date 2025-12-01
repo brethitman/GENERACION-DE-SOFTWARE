@@ -1,3 +1,4 @@
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\FRONTEND_GS\src\types\Usuario.ts
 export type Rol = "estudiante" | "editor" | "ejecutor" | "administrador";
 
 export interface UsuarioPublico {

@@ -1,4 +1,4 @@
-
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\FRONTEND_GS\src\utils\rutaPorRol.ts
 export type Rol = "estudiante" | "editor" | "ejecutor" | "administrador";
 
 export const rutaPorRol = (rol?: string) => {
@@ -14,3 +14,4 @@ export const rutaPorRol = (rol?: string) => {
       return "/panel/estudiante";
   }
 };
+

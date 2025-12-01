@@ -1,3 +1,4 @@
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\FRONTEND_GS\src\context\AuthProvider.tsx
 import type { ReactNode } from "react";
 
 import { useProvideAuth } from "../hooks/useProvideAuth";

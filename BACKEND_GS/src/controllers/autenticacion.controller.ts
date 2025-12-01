@@ -1,4 +1,4 @@
-
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\BACKEND_GS\src\controllers\autenticacion.controller.ts
 import type { Request, Response, NextFunction } from "express";
 import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
 

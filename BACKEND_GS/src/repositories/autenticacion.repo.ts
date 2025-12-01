@@ -1,4 +1,4 @@
-
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\BACKEND_GS\src\repositories\autenticacion.repo.ts
 import bcrypt from "bcryptjs";
 
 import { ejecutarFilas, ejecutarConsulta } from "../infrastructure/db";

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useAuth } from "../../context/auth-context";
 
@@ -18,19 +18,19 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
   const [minimizado, setMinimizado] = useState(false);
 
   // --------------------------------------------------------
-  // 🔄 Cargar comentario + respuestas del backend
+  // 🔄 Cargar comentario + respuestas del backend (useCallback FIX)
   // --------------------------------------------------------
-  const cargarComentarios = async () => {
+  const cargarComentarios = useCallback(async () => {
     const res = await fetch(
       `${API_URL}/api/v1/comentarios/topicos/${idTopico}/comentarios`
     );
     const data = await res.json();
     setComentario(data.comentario || null);
-  };
+  }, [idTopico]);
 
   useEffect(() => {
     cargarComentarios();
-  }, [idTopico]);
+  }, [cargarComentarios]);
 
   // --------------------------------------------------------
   // 📨 Enviar comentario o respuesta
@@ -41,7 +41,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
 
     try {
       if (!comentario) {
-        // Crear comentario principal
+        // Comentario principal
         await fetch(
           `${API_URL}/api/v1/comentarios/topicos/${idTopico}/comentarios`,
           {
@@ -54,7 +54,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
           }
         );
       } else {
-        // Crear respuesta al comentario principal
+        // Respuesta
         await fetch(
           `${API_URL}/api/v1/comentarios/comentarios/${comentario.idComentario}/respuestas`,
           {
@@ -69,7 +69,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
       }
 
       setNuevoTexto("");
-      await cargarComentarios(); // Recargar desde la DB
+      await cargarComentarios(); // refrescar
     } catch (err) {
       console.error(err);
       alert("Error al enviar comentario.");
@@ -77,7 +77,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
   };
 
   // --------------------------------------------------------
-  // RENDER
+  // UI
   // --------------------------------------------------------
   return (
     <div
@@ -89,7 +89,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
         height: "calc(100vh - 125px)",
       }}
     >
-      {/* Minimizar / Expandir */}
+      {/* Minimizar */}
       <button
         onClick={() => setMinimizado(!minimizado)}
         className="absolute top-4 left-[-40px] bg-[#7E3132] text-white rounded-l-md px-2 py-1 text-sm hover:bg-[#5b2425]"
@@ -103,7 +103,6 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
             Comentarios
           </h2>
 
-          {/* SIN COMENTARIO AÚN */}
           {!comentario ? (
             <p className="text-gray-500 mb-4">
               No hay comentarios aún. ¡Sé el primero!
@@ -115,7 +114,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
                 <p className="mt-1">{comentario.texto}</p>
               </div>
 
-              {/* RESPUESTAS */}
+              {/* Respuestas */}
               {comentario.respuestas.length > 0 && (
                 <div className="ml-3 border-l pl-3 space-y-2">
                   {comentario.respuestas.map((r, i) => (

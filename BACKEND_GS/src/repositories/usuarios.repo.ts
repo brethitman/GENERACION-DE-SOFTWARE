@@ -1,4 +1,4 @@
-//usuarios.repo.ts
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\BACKEND_GS\src\repositories\usuarios.repo.ts
 import { pool } from "../infrastructure/db";
 
 export type Rol = "editor" | "ejecutor" | "estudiante" | "administrador";

@@ -3,26 +3,36 @@ import cors from "cors";
 import express from "express";
 import session from "express-session";
 import morgan from "morgan";
+import passport from "passport";
 
 // ===== Internos =====
-import passport from "./config/passport.google";
+
+
+
+// ⚠️ IMPORTANTE: Tu archivo original de Google Login (de Proyecto 1)
+import "./infrastructure/passport-google";
 import { manejadorErrores } from "./middlewares/error.middleware";
+// Rutas adicionales del Proyecto 2
 import rutasAutenticacion from "./routes/autenticacion.routes";
 import cloudinaryRoutes from "./routes/cloudinary.routes";
 import comentariosRoutes from "./routes/comentarios.routes";
 import cursosRoutes from "./routes/cursos.routes";
-import rutasGoogle from "./routes/google.routes";
 import topicosRoutes from "./routes/topicos.routes";
 import usuariosRoutes from "./routes/usuarios.routes";
-
 const app = express();
 
-// CORS (habilita cookies si luego las usas)
-app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
+// ========= C O N F I G U R A C I Ó N  G E N E R A L =========
+
+// CORS para permitir cookies (si el front las usa)
+app.use(cors({ 
+  origin: ["http://localhost:5173"], 
+  credentials: true 
+}));
+
 app.use(express.json());
 app.use(morgan("dev"));
 
-// 🔐 Sessions: requerido por passport-google-oidc
+// 🔐 Sessions (NECESARIO PARA GOOGLE LOGIN)
 app.use(
   session({
     secret: process.env.SESSION_SECRET as string,
@@ -31,24 +41,25 @@ app.use(
   })
 );
 
-// 🔐 Passport SIEMPRE después de session
+// 🔐 Passport: inicialización EXACTA como tu Proyecto 1
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Rutas
+// ========= R U T A S ==========
+
+// 💠 Login tradicional + verificación código + Google Login
 app.use("/api/v1/autenticacion", rutasAutenticacion);
-app.use("/api/v1/autenticacion", rutasGoogle);
 
+// 💠 Se mantienen TODAS las rutas del Proyecto 2
 app.use("/api/v1/usuarios", usuariosRoutes);
-
 app.use("/api/v1/topicos", topicosRoutes);
 app.use("/api/v1/cursos", cursosRoutes);
 app.use("/api/v1/comentarios", comentariosRoutes);
 
-// Errores (al final)
-app.use(manejadorErrores);
-
-//para subir imgs
+// Ruta de subida a Cloudinary
 app.use("/api/cloudinary", cloudinaryRoutes);
+
+// ========= E R R O R E S ==========
+app.use(manejadorErrores);
 
 export default app;

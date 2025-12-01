@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verificarUsuario = verificarUsuario;
 exports.obtenerUsuarioPorId = obtenerUsuarioPorId;
 exports.marcarUsuarioComoVerificado = marcarUsuarioComoVerificado;
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\BACKEND_GS\src\repositories\autenticacion.repo.ts
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const db_1 = require("../infrastructure/db");
 /**

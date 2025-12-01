@@ -1,3 +1,5 @@
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\BACKEND_GS\src\controllers\registro.controller.ts
+
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 

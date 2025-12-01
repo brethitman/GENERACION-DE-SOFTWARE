@@ -1,3 +1,4 @@
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\FRONTEND_GS\src\layouts\MainLayout.tsx
 import { Outlet } from "react-router-dom";
 
 import Header from "../components/Header/Header";

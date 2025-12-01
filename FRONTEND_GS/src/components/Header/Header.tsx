@@ -1,3 +1,4 @@
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\FRONTEND_GS\src\components\Header\Header.tsx
 import { Link } from "react-router-dom";
 
 import logo from '../../assets/logo.png';

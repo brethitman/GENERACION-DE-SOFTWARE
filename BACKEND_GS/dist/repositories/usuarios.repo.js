@@ -4,7 +4,7 @@ exports.buscarPorCorreo = buscarPorCorreo;
 exports.crearUsuario = crearUsuario;
 exports.listarUsuarios = listarUsuarios;
 exports.actualizarUsuario = actualizarUsuario;
-//usuarios.repo.ts
+//C:\Users\Ffcg\Music\main de main\google\GENERACION-DE-SOFTWARE\BACKEND_GS\src\repositories\usuarios.repo.ts
 const db_1 = require("../infrastructure/db");
 async function buscarPorCorreo(correo) {
     const q = `

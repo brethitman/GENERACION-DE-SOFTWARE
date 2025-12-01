@@ -1,30 +1,81 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
 
-import type { Credenciales, RespuestaLogin } from "../context/auth-context";
-import { setAuthToken } from "../services/api";
-import { autenticarUsuario, verificarCodigo as verificarCodigoAPI, reenviarCodigo as reenviarCodigoAPI } from "../services/auth";
+import type {
+  Credenciales,
+  RespuestaLogin,
+  EstadoAuth
+} from "../context/auth-context";
+import api, { setAuthToken } from "../services/api";
 import type { UsuarioPublico } from "../types/Usuario";
-import { rutaPorRol } from "../utils/rutaPorRol";
 
 export function useProvideAuth() {
-  const [usuario, setUsuario] = useState<UsuarioPublico | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [estado, setEstado] = useState<EstadoAuth>({
+    usuario: null,
+    token: null,
+  });
   const [cargandoAuth, setCargandoAuth] = useState(true);
 
-  const navigate = useNavigate();
+  // 🔐 LOGIN TRADICIONAL
+  const iniciarSesion = async (cred: Credenciales): Promise<RespuestaLogin> => {
+    const { data } = await api.post<RespuestaLogin>(
+      "/api/v1/autenticacion/login",
+      cred
+    );
 
-  // Hidratar Auth al arrancar
+    if (data.requiereVerificacion) {
+      return data; // NO guardamos token
+    }
+
+    if (data.datos?.usuario && data.datos?.token) {
+      const token = data.datos.token;
+      const usuario = data.datos.usuario;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+      setAuthToken(token);
+      setEstado({ token, usuario });
+    }
+
+    return data;
+  };
+
+  // 🔐 VERIFICAR CÓDIGO
+  const verificarCodigo = async (usuarioId: number, codigo: string) => {
+    await api.post("/api/v1/autenticacion/verificar-codigo", {
+      usuarioId,
+      codigo,
+    });
+  };
+
+  // 🔁 REENVIAR CÓDIGO
+  const reenviarCodigo = async (usuarioId: number) => {
+    await api.post("/api/v1/autenticacion/reenviar-codigo", { usuarioId });
+  };
+
+  // 🚀 GOOGLE LOGIN
+  const iniciarSesionConGoogle = useCallback(() => {
+    window.location.href =
+      "http://localhost:3000/api/v1/autenticacion/google";
+  }, []);
+
+  // 🔄 CERRAR SESIÓN
+  const cerrarSesion = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    setAuthToken(null);
+    setEstado({ usuario: null, token: null });
+  };
+
+  // 🧊 Hidratar sesión
   useEffect(() => {
-    const tk = localStorage.getItem("token");
-    const uStr = localStorage.getItem("usuario");
+    const token = localStorage.getItem("token");
+    const usuarioString = localStorage.getItem("usuario");
 
-    if (tk && uStr) {
+    if (token && usuarioString) {
       try {
-        const u = JSON.parse(uStr) as UsuarioPublico;
-        setAuthToken(tk);
-        setToken(tk);
-        setUsuario(u);
+        const usuario: UsuarioPublico = JSON.parse(usuarioString);
+        setAuthToken(token);
+        setEstado({ token, usuario });
       } catch {
         localStorage.removeItem("usuario");
       }
@@ -33,59 +84,21 @@ export function useProvideAuth() {
     setCargandoAuth(false);
   }, []);
 
-  // Iniciar sesión
-  const iniciarSesion = useCallback(async (cred: Credenciales): Promise<RespuestaLogin> => {
-    const respuesta = await autenticarUsuario(cred);
-
-    if (respuesta.requiereVerificacion) {
-      return respuesta;
-    }
-
-    if (respuesta.datos) {
-      const { usuario: u, token: tk } = respuesta.datos;
-
-      localStorage.setItem("token", tk);
-      localStorage.setItem("usuario", JSON.stringify(u));
-      setAuthToken(tk);
-
-      setToken(tk);
-      setUsuario(u);
-
-      navigate(rutaPorRol(u.rol), { replace: true });
-    }
-
-    return respuesta;
-  }, [navigate]);
-
-  const verificarCodigo = async (id: number, codigo: string) => {
-    await verificarCodigoAPI(id, codigo);
-  };
-
-  const reenviarCodigo = async (id: number) => {
-    await reenviarCodigoAPI(id);
-  };
-
-  const cerrarSesion = () => {
-    setUsuario(null);
-    setToken(null);
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
-    setAuthToken(null);
-
-    navigate("/login", { replace: true });
-  };
-
   return {
-    usuario,
-    token,
-    estaAutenticado: !!usuario && !!token,
+    usuario: estado.usuario,
+    token: estado.token,
+    estaAutenticado: Boolean(estado.token),
     cargandoAuth,
+
     iniciarSesion,
     verificarCodigo,
     reenviarCodigo,
     cerrarSesion,
+
+    iniciarSesionConGoogle,
+    setToken: (token: string | null) =>
+      setEstado((prev) => ({ ...prev, token })),
+    setUsuario: (usuario: UsuarioPublico | null) =>
+      setEstado((prev) => ({ ...prev, usuario })),
   };
 }
-
-export { useProvideAuth as useAuth };

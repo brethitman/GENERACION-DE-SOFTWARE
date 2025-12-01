@@ -25,10 +25,16 @@ export type Ctx = {
   token: string | null;
   estaAutenticado: boolean;
   cargandoAuth: boolean;
+
   iniciarSesion: (cred: Credenciales) => Promise<RespuestaLogin>;
   verificarCodigo: (id: number, codigo: string) => Promise<void>;
   reenviarCodigo: (id: number) => Promise<void>;
   cerrarSesion: () => void;
+
+  // 🔽 AGREGADO PARA GOOGLE LOGIN
+  iniciarSesionConGoogle: () => void;
+  setToken?: (token: string | null) => void;
+  setUsuario?: (usuario: UsuarioPublico | null) => void;
 };
 
 export const AuthContext = createContext<Ctx>({
@@ -40,7 +46,11 @@ export const AuthContext = createContext<Ctx>({
   iniciarSesion: async () => ({ ok: false, mensaje: "" }),
   verificarCodigo: async () => Promise.resolve(),
   reenviarCodigo: async () => Promise.resolve(),
-  cerrarSesion: () => {}
+  cerrarSesion: () => {},
+
+  iniciarSesionConGoogle: () => {},
+  setToken: () => {},
+  setUsuario: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);

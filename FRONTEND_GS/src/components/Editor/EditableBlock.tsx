@@ -1,5 +1,5 @@
 import Color from "@tiptap/extension-color";
-import Image from '@tiptap/extension-image';
+import Image from "@tiptap/extension-image";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -41,17 +41,18 @@ const EditableBlock = forwardRef<EditableBlockHandle, Props>(
       if (editor) {
         onEditorReady?.(editor);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editor]);
 
     useImperativeHandle(ref, () => ({
       insertResource(resource) {
-  if (!editor) return;
+        if (!editor) return;
 
-  if (resource.type === "image") {
-    editor.commands.setImage({ src: resource.content, alt: "imagen" });
-  } else {
-    editor.commands.insertContent(resource.content);
-  }
+        if (resource.type === "image") {
+          editor.commands.setImage({ src: resource.content, alt: "imagen" });
+        } else {
+          editor.commands.insertContent(resource.content);
+        }
       },
       editor,
     }));

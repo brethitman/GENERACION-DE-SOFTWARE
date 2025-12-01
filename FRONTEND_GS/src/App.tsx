@@ -1,13 +1,12 @@
 // src/App.tsx
 
-// ===== External =====
 import { Route, Routes } from "react-router-dom";
 
-// ===== Internal =====
 import RutaPrivada from "./components/RutaPrivada/RutaPrivada";
 import RutaPrivadaPorRol from "./components/RutaPrivada/RutaPrivadaPorRol";
 import MainLayout from "./layouts/MainLayout";
 import EditarTopico from "./pages/DocenteEditor/EditarTopico";
+import GoogleCallback from "./pages/Login/GoogleCallback";  // ⬅ AÑADIDO
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
 import VerTopico from "./pages/Topico/VerTopico";
@@ -25,16 +24,18 @@ export default function App() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
+
         {/* Público */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
 
+        {/* 👇 AÑADIDO - NECESARIO PARA GOOGLE LOGIN */}
+        <Route path="/auth/google-success" element={<GoogleCallback />} />
+
         <Route path="/roles" element={<Roles />} />
         <Route path="/CursoAdmi" element={<AdmiVerCurso />} />
-
-
-        <Route path="/verificacion" element={<Verificacion />} /> {/* ✅ Nueva ruta */}
+        <Route path="/verificacion" element={<Verificacion />} />
 
         {/* Privado */}
         <Route
@@ -47,13 +48,13 @@ export default function App() {
         />
 
         <Route
-           path="/panel/admin"
-            element={
-             <RutaPrivada>
-               <PanelAdmin />
-              </RutaPrivada>
-           }
-       />
+          path="/panel/admin"
+          element={
+            <RutaPrivada>
+              <PanelAdmin />
+            </RutaPrivada>
+          }
+        />
 
         <Route
           path="/panel/estudiante"
@@ -99,6 +100,7 @@ export default function App() {
             </RutaPrivadaPorRol>
           }
         />
+
         {/* Fallback */}
         <Route path="*" element={<Home />} />
       </Route>
