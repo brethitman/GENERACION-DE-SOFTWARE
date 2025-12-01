@@ -6,7 +6,8 @@ import { useAuth } from "../../context/auth-context";
 import type { UsuarioPublico } from "../../types/Usuario";
 import { rutaPorRol } from "../../utils/rutaPorRol";
 
-export default function GoogleCallback(): JSX.Element {
+export default function GoogleCallback() {
+
   const navigate = useNavigate();
   const { setToken, setUsuario } = useAuth();
 

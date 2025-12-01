@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-import { useAuth } from "../../hooks/useProvideAuth";
+import { useAuth } from "../../context/auth-context";
+
 
 export default function Sidebar() {
   const { estaAutenticado } = useAuth();
