@@ -20,7 +20,6 @@ export default function VerTopico() {
   // --- Cargar el tópico ---
   useEffect(() => {
     if (!id) return;
-
     fetchTopicoPorId(id)
       .then((data) => setTopico(data as TopicoConId))
       .catch((e: unknown) => {
