@@ -77,7 +77,7 @@ describe("<GestionarRoles />", () => {
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
-        "http://localhost:3000/api/v1/usuarios/1",
+        "https://el-club-del-frijol.onrender.com/api/v1/usuarios/1",
         expect.objectContaining({
           method: "PUT",
           body: JSON.stringify({ rol: "editor" }),

@@ -14,7 +14,7 @@ export default function CursoPanel() {
 
   useEffect(() => {
   // Obtener curso con tópicos
-  fetch("http://localhost:3000/api/v1/cursos/1/topicos")
+  fetch("https://el-club-del-frijol.onrender.com/api/v1/cursos/1/topicos")
     .then((res) => res.json())
     .then((data: { ok: boolean; curso: Curso }) => {
       if (data.ok) setCurso(data.curso);
@@ -22,7 +22,7 @@ export default function CursoPanel() {
     .catch((err) => console.error(err));
 
   // Obtener usuarios con rol "editor"
-  fetch("http://localhost:3000/api/v1/usuarios")
+  fetch("https://el-club-del-frijol.onrender.com/api/v1/usuarios")
     .then((res) => res.json())
     .then((data: { ok: boolean; usuarios: UsuarioPublico[] }) => {
       if (data.ok) {

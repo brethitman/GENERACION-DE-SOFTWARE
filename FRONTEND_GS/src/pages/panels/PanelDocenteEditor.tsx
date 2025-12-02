@@ -31,7 +31,7 @@ export default function PanelDocenteEditor() {
   // 🔹 Fetch del curso actual
   const fetchCursoActual = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/cursos/${idCurso}`);
+      const res = await fetch(`https://el-club-del-frijol.onrender.com/api/v1/cursos/${idCurso}`);
       const data = await res.json();
 
       if (!data.ok) {

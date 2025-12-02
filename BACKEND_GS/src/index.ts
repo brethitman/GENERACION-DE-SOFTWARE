@@ -6,5 +6,5 @@ import app from "./app";
 const PUERTO = process.env.PUERTO || 3000;
 
 app.listen(PUERTO, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PUERTO}/api/v1/autenticacion/login`);
+  console.log(`🚀 Servidor corriendo en https://el-club-del-frijol-frontend.onrender.com/api/v1/autenticacion/login`);
 });

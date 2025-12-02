@@ -29,7 +29,7 @@ export default function EditarCursoModal({
     setError(null);
 
   try {
-    const response = await fetch(`http://localhost:3000/api/v1/cursos/${id}`, {
+    const response = await fetch(`https://el-club-del-frijol.onrender.com/api/v1/cursos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

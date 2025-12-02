@@ -22,7 +22,7 @@ export async function callbackGoogle(req: Request, res: Response): Promise<void>
   try {
     const user = req.user as { email?: string; name?: string } | undefined;
     if (!user?.email) {
-      const front = new URL("http://localhost:5173/");
+      const front = new URL("https://el-club-del-frijol-frontend.onrender.com/");
       front.searchParams.set("error", "google_auth_failed");
       res.redirect(front.toString());
       return;
@@ -48,7 +48,7 @@ export async function callbackGoogle(req: Request, res: Response): Promise<void>
     });
 
     // Redirige al front con token y datos
-    const urlFront = new URL("http://localhost:5173/login/");
+    const urlFront = new URL("https://el-club-del-frijol-frontend.onrender.com/login/");
     urlFront.searchParams.set("token", token);
     urlFront.searchParams.set("nombre", usuario.nombre);
     urlFront.searchParams.set("correo", usuario.correo);
@@ -56,7 +56,7 @@ export async function callbackGoogle(req: Request, res: Response): Promise<void>
     res.redirect(urlFront.toString());
   } catch (err) {
     console.error("[callbackGoogle] Error:", err);
-    const front = new URL("http://localhost:5173/");
+    const front = new URL("https://el-club-del-frijol-frontend.onrender.com/");
     front.searchParams.set("error", "google_auth_failed");
     res.redirect(front.toString());
   }

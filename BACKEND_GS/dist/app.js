@@ -13,14 +13,14 @@ const passport_google_1 = __importDefault(require("./config/passport.google"));
 const error_middleware_1 = require("./middlewares/error.middleware");
 const autenticacion_routes_1 = __importDefault(require("./routes/autenticacion.routes"));
 const cloudinary_routes_1 = __importDefault(require("./routes/cloudinary.routes"));
+const comentarios_routes_1 = __importDefault(require("./routes/comentarios.routes"));
 const cursos_routes_1 = __importDefault(require("./routes/cursos.routes"));
 const google_routes_1 = __importDefault(require("./routes/google.routes"));
 const topicos_routes_1 = __importDefault(require("./routes/topicos.routes"));
 const usuarios_routes_1 = __importDefault(require("./routes/usuarios.routes"));
-const comentarios_routes_1 = __importDefault(require("./routes/comentarios.routes"));
 const app = (0, express_1.default)();
 // CORS (habilita cookies si luego las usas)
-app.use((0, cors_1.default)({ origin: ["http://localhost:5173"], credentials: true }));
+app.use((0, cors_1.default)({ origin: ["https://el-club-del-frijol-frontend.onrender.com"], credentials: true }));
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)("dev"));
 // 🔐 Sessions: requerido por passport-google-oidc

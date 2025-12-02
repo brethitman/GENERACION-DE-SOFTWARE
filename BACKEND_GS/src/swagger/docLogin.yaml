@@ -4,7 +4,7 @@ info:
   description: Documentación de la API (login) con ejemplo real de request/response.
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
+  - url: https://el-club-del-frijol.onrender.com
     description: Local
 tags:
   - name: Autenticación
