@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": "chmod +x node_modules/.bin/tsc && npx tsc",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/dist/index.js"
+    }
+  ]
+}
