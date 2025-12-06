@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import api from "../../services/api"; // Importamos el api configurado
 import type { Curso } from "../../types/Curso";
 
 interface EditarCursoModalProps {
@@ -24,40 +25,38 @@ export default function EditarCursoModal({
   const [error, setError] = useState<string | null>(null);
 
   if (!abierto) return null;
+
   const handleGuardar = async () => {
     setLoading(true);
     setError(null);
 
-  try {
-    const response = await fetch(`http://localhost:3000/api/v1/cursos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ titulo, descripcion }),
-    });
+    try {
+      // ✅ Reemplazo: Usamos api.put en lugar de fetch
+      // No necesitamos headers manuales ni JSON.stringify
+      // La URL base ya está configurada en la instancia 'api'
+      const { data } = await api.put(`/api/v1/cursos/${id}`, {
+        titulo,
+        descripcion,
+      });
 
-    if (!response.ok) throw new Error("Error al actualizar el curso");
+      // Validamos si el backend devuelve un flag de error lógico
+      if (data.ok === false) throw new Error(data.mensaje || "Error desconocido");
 
-    const data = await response.json();
+      // 👉 Extraemos el objeto curso de la respuesta
+      actualizar(data.curso);
 
-    if (!data.ok) throw new Error(data.mensaje || "Error desconocido");
-
-    // 👉 Extraemos solo el objeto curso
-    actualizar(data.curso);
-
-    cerrar();
-  } catch (err: unknown) {
-  if (err instanceof Error) {
-    setError(err.message);
-  } else {
-    setError("Error desconocido");
-  }
-  } finally {
-    setLoading(false);
-  }
-};
-
+      cerrar();
+    } catch (err: unknown) {
+      console.error(err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error desconocido");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-stone-800/50 flex justify-center items-center z-50">

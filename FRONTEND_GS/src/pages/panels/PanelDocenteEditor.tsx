@@ -14,6 +14,10 @@ import { fetchTopicos } from "../../services/topicos";
 import type { Curso } from "../../types/Curso";
 import type { Topico } from "../../types/Topico";
 
+// --- CONFIGURACIÓN DE URL ---
+// Cambia este valor por la URL de tu backend desplegado cuando lo subas.
+const API_BASE_URL = "https://generacion-back.vercel.app";
+
 export default function PanelDocenteEditor() {
   const idCurso = "1"; // Único curso creado por ahora
   const { usuario } = useAuth();
@@ -31,7 +35,8 @@ export default function PanelDocenteEditor() {
   // 🔹 Fetch del curso actual
   const fetchCursoActual = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/cursos/${idCurso}`);
+      // Usamos API_BASE_URL aquí
+      const res = await fetch(`${API_BASE_URL}/api/v1/cursos/${idCurso}`);
       const data = await res.json();
 
       if (!data.ok) {

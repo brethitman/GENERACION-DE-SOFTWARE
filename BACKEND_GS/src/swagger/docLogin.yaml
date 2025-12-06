@@ -6,6 +6,10 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local
+    # ✅ AGREGA ESTO (Para que funcione la documentación en la nube)
+  # Reemplaza 'generacion-back.vercel.app' con tu URL real del backend
+  - url: https://generacion-back.vercel.app
+    description: Servidor Producción (Vercel)
 tags:
   - name: Autenticación
     description: Endpoints de autenticación

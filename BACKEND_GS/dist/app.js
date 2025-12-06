@@ -23,10 +23,7 @@ const usuarios_routes_1 = __importDefault(require("./routes/usuarios.routes"));
 const app = (0, express_1.default)();
 // ========= C O N F I G U R A C I Ó N  G E N E R A L =========
 // CORS para permitir cookies (si el front las usa)
-app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173"],
-    credentials: true
-}));
+app.use((0, cors_1.default)({ origin: "*", credentials: true }));
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)("dev"));
 // 🔐 Sessions (NECESARIO PARA GOOGLE LOGIN)

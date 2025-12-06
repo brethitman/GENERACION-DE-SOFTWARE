@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+// --- CONFIGURACIÓN DE URL ---
+// Cambia este valor por la URL de tu backend desplegado cuando lo subas.
+const API_BASE_URL = "https://generacion-back.vercel.app";
+
 type Usuario = {
   id: number;
   nombre: string;
@@ -23,7 +27,8 @@ export default function RolesUsuario() {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const respuesta = await fetch("http://localhost:3000/api/v1/usuarios");
+        // Usamos API_BASE_URL
+        const respuesta = await fetch(`${API_BASE_URL}/api/v1/usuarios`);
         const data = await respuesta.json();
         setUsuarios(data.usuarios || []);
       } catch (error) {
@@ -38,7 +43,8 @@ export default function RolesUsuario() {
   // 🔹 Función para actualizar el rol
   const actualizarRol = async (id: number, nuevoRol: string) => {
     try {
-      const respuesta = await fetch(`http://localhost:3000/api/v1/usuarios/${id}`, {
+      // Usamos API_BASE_URL
+      const respuesta = await fetch(`${API_BASE_URL}/api/v1/usuarios/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rol: nuevoRol }),

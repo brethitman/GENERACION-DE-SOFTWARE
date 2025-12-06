@@ -32,7 +32,8 @@ router.get("/google/callback", (req, res, next) => {
         }
         if (!user) {
             // Evita "Cannot GET /login"
-            const front = new URL("http://localhost:5173/");
+            const urlFrontend = process.env.URL_FRONTEND || "http://localhost:5173";
+            const front = new URL(urlFrontend);
             front.searchParams.set("error", "google_auth_failed");
             res.redirect(front.toString());
             return;

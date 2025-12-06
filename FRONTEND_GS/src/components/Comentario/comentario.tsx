@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 import { useAuth } from "../../context/auth-context";
+import api from "../../services/api";
 
 interface Comentario {
   idComentario: string;
@@ -9,8 +10,6 @@ interface Comentario {
   respuestas: { autor: string; texto: string }[];
 }
 
-const API_URL = "http://localhost:3000";
-
 export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
   const { usuario } = useAuth();
   const [comentario, setComentario] = useState<Comentario | null>(null);
@@ -18,14 +17,15 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
   const [minimizado, setMinimizado] = useState(false);
 
   // --------------------------------------------------------
-  // 🔄 Cargar comentario + respuestas del backend (useCallback FIX)
+  // 🔄 Cargar comentario + respuestas
   // --------------------------------------------------------
   const cargarComentarios = useCallback(async () => {
-    const res = await fetch(
-      `${API_URL}/api/v1/comentarios/topicos/${idTopico}/comentarios`
-    );
-    const data = await res.json();
-    setComentario(data.comentario || null);
+    try {
+      const { data } = await api.get(`/api/v1/comentarios/topicos/${idTopico}/comentarios`);
+      setComentario(data.comentario || null);
+    } catch (error) {
+      console.error("Error cargando comentarios", error);
+    }
   }, [idTopico]);
 
   useEffect(() => {
@@ -42,34 +42,20 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
     try {
       if (!comentario) {
         // Comentario principal
-        await fetch(
-          `${API_URL}/api/v1/comentarios/topicos/${idTopico}/comentarios`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              idUsuario: usuario.id,
-              texto: nuevoTexto,
-            }),
-          }
-        );
+        await api.post(`/api/v1/comentarios/topicos/${idTopico}/comentarios`, {
+          idUsuario: usuario.id,
+          texto: nuevoTexto,
+        });
       } else {
         // Respuesta
-        await fetch(
-          `${API_URL}/api/v1/comentarios/comentarios/${comentario.idComentario}/respuestas`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              idUsuario: usuario.id,
-              texto: nuevoTexto,
-            }),
-          }
-        );
+        await api.post(`/api/v1/comentarios/comentarios/${comentario.idComentario}/respuestas`, {
+          idUsuario: usuario.id,
+          texto: nuevoTexto,
+        });
       }
 
       setNuevoTexto("");
-      await cargarComentarios(); // refrescar
+      await cargarComentarios(); // Refrescar
     } catch (err) {
       console.error(err);
       alert("Error al enviar comentario.");
@@ -89,7 +75,7 @@ export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
         height: "calc(100vh - 125px)",
       }}
     >
-      {/* Minimizar */}
+      {/* Botón Minimizar */}
       <button
         onClick={() => setMinimizado(!minimizado)}
         className="absolute top-4 left-[-40px] bg-[#7E3132] text-white rounded-l-md px-2 py-1 text-sm hover:bg-[#5b2425]"

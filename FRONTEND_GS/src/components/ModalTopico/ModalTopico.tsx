@@ -5,6 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { fetchTopicos } from "../../services/topicos";
 import type { Topico } from "../../types/Topico";
 
+// --- CONFIGURACIÓN DE URL ---
+// Cambia este valor por la URL de tu backend desplegado cuando lo subas.
+// Ejemplo: "https://mi-api-backend.railway.app"
+const API_BASE_URL = "http://localhost:3000"; 
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -31,57 +36,56 @@ export default function CrearTopicoModal({ isOpen, onClose, onCreated, idCurso }
           .sort((a, b) => a.orden - b.orden);
         setTopicos(filtrados);
             
-         if (filtrados.length > 0) {
-           setAfterTopicoId(filtrados[filtrados.length - 1].id);
-         } else {
-           setAfterTopicoId(null);
-         }
+        if (filtrados.length > 0) {
+          setAfterTopicoId(filtrados[filtrados.length - 1].id);
+        } else {
+          setAfterTopicoId(null);
+        }
       })
       .catch((err) => setError(err.message));
   }, [isOpen, idCurso]);
-  
 
-const handleSubmit = async () => {
-  if (!titulo.trim()) {
-    alert("El título es obligatorio");
-    return;
-  }
+  const handleSubmit = async () => {
+    if (!titulo.trim()) {
+      alert("El título es obligatorio");
+      return;
+    }
 
-  setLoading(true);
-  try {
-    const res = await fetch("http://localhost:3000/api/v1/topicos/insertar-despues", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        idCurso,
-        titulo: titulo.trim(),
-        contenido: {},
-        afterTopicoId,
-      }),
-    });
+    setLoading(true);
+    try {
+      // AQUÍ USAMOS LA VARIABLE:
+      const res = await fetch(`${API_BASE_URL}/api/v1/topicos/insertar-despues`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idCurso,
+          titulo: titulo.trim(),
+          contenido: {},
+          afterTopicoId,
+        }),
+      });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.mensaje || "Error al crear el tópico");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.mensaje || "Error al crear el tópico");
 
-    onCreated(data.topico);  // opcional si quieres actualizar lista en padre
-    setTitulo("");
-    setAfterTopicoId(null);
+      onCreated(data.topico);  // opcional si quieres actualizar lista en padre
+      setTitulo("");
+      setAfterTopicoId(null);
 
-    // Navegar directamente a EditarMenu con el ID del tópico creado
-    navigate(`/editar-topico/${data.topico.id}`);
+      // Navegar directamente a EditarMenu con el ID del tópico creado
+      navigate(`/editar-topico/${data.topico.id}`);
 
-    onClose();
-  } catch (e: unknown) {
-  if (e instanceof Error) {
-    setError(e.message);
-  } else {
-    setError(String(e));
-  }
-} finally {
-    setLoading(false);
-  }
-};
-
+      onClose();
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError(e.message);
+      } else {
+        setError(String(e));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -138,4 +142,3 @@ const handleSubmit = async () => {
     </div>
   );
 }
-

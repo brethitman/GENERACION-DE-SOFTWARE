@@ -1,7 +1,9 @@
-// src/services/api.ts
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+// 1. CONFIGURACIÓN CORRECTA PARA VITE
+// Usamos import.meta.env (nativo de Vite).
+// Si VITE_API_URL no existe (local), usa localhost:3000.
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const api = axios.create({
   baseURL,
@@ -9,7 +11,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// ✅ Helper para sincronizar el Authorization cuando cambie el token
+// ✅ Helper para sincronizar el Authorization
 export const setAuthToken = (token: string | null) => {
   if (token) {
     api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -18,13 +20,28 @@ export const setAuthToken = (token: string | null) => {
   }
 };
 
-// ✅ Hidrata por si hay token ya guardado (primer render)
-setAuthToken(localStorage.getItem("token"));
-
-// (opcional) Mantén este interceptor por si se pierde el default:
-api.interceptors.request.use((config) => {
+// 2. PROTECCIÓN CONTRA PANTALLA BLANCA
+// Envolvemos localStorage en un try/catch seguro.
+try {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    setAuthToken(token);
+  }
+} catch (error) {
+  console.error("No se pudo acceder al almacenamiento local", error);
+}
+
+// 3. INTERCEPTOR (Protegido)
+api.interceptors.request.use((config) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch {
+    // ✅ CORREGIDO: Quitamos (error) porque no se usaba.
+    // Ignoramos errores de storage para dejar pasar la petición
+  }
   return config;
 });
 

@@ -6,6 +6,10 @@ import type { Curso } from "../../types/Curso";
 import type { Topico } from "../../types/Topico";
 import type { UsuarioPublico } from "../../types/Usuario";
 
+// --- CONFIGURACIÓN DE URL ---
+// Cambia este valor por la URL de tu backend desplegado cuando lo subas.
+const API_BASE_URL = "https://generacion-back.vercel.app"; 
+
 export default function CursoPanel() {
   const navigate = useNavigate();
   const [editEnabled, setEditEnabled] = useState(false);
@@ -13,24 +17,24 @@ export default function CursoPanel() {
   const [docentes, setDocentes] = useState<UsuarioPublico[]>([]);
 
   useEffect(() => {
-  // Obtener curso con tópicos
-  fetch("http://localhost:3000/api/v1/cursos/1/topicos")
-    .then((res) => res.json())
-    .then((data: { ok: boolean; curso: Curso }) => {
-      if (data.ok) setCurso(data.curso);
-    })
-    .catch((err) => console.error(err));
+    // Obtener curso con tópicos usando API_BASE_URL
+    fetch(`${API_BASE_URL}/api/v1/cursos/1/topicos`)
+      .then((res) => res.json())
+      .then((data: { ok: boolean; curso: Curso }) => {
+        if (data.ok) setCurso(data.curso);
+      })
+      .catch((err) => console.error(err));
 
-  // Obtener usuarios con rol "editor"
-  fetch("http://localhost:3000/api/v1/usuarios")
-    .then((res) => res.json())
-    .then((data: { ok: boolean; usuarios: UsuarioPublico[] }) => {
-      if (data.ok) {
-        const editores = data.usuarios.filter((u) => u.rol === "editor");
-        setDocentes(editores);
-      }
-    })
-    .catch((err) => console.error(err));
+    // Obtener usuarios con rol "editor" usando API_BASE_URL
+    fetch(`${API_BASE_URL}/api/v1/usuarios`)
+      .then((res) => res.json())
+      .then((data: { ok: boolean; usuarios: UsuarioPublico[] }) => {
+        if (data.ok) {
+          const editores = data.usuarios.filter((u) => u.rol === "editor");
+          setDocentes(editores);
+        }
+      })
+      .catch((err) => console.error(err));
   }, []);
 
 

@@ -16,7 +16,8 @@ async function callbackGoogle(req, res) {
     try {
         const user = req.user;
         if (!user?.email) {
-            const front = new URL("http://localhost:5173/");
+            const urlFrontend = process.env.URL_FRONTEND || "http://localhost:5173";
+            const front = new URL(urlFrontend);
             front.searchParams.set("error", "google_auth_failed");
             res.redirect(front.toString());
             return;
@@ -38,15 +39,17 @@ async function callbackGoogle(req, res) {
             correo: usuario.correo,
         });
         // Redirige al front con token y datos
-        const urlFront = new URL("http://localhost:5173/login/");
-        urlFront.searchParams.set("token", token);
-        urlFront.searchParams.set("nombre", usuario.nombre);
-        urlFront.searchParams.set("correo", usuario.correo);
-        res.redirect(urlFront.toString());
+        const urlFrontend = process.env.URL_FRONTEND || "http://localhost:5173";
+        const front = new URL(urlFrontend);
+        front.searchParams.set("token", token);
+        front.searchParams.set("nombre", usuario.nombre);
+        front.searchParams.set("correo", usuario.correo);
+        res.redirect(front.toString());
     }
     catch (err) {
         console.error("[callbackGoogle] Error:", err);
-        const front = new URL("http://localhost:5173/");
+        const urlFrontend = process.env.URL_FRONTEND || "http://localhost:5173";
+        const front = new URL(urlFrontend);
         front.searchParams.set("error", "google_auth_failed");
         res.redirect(front.toString());
     }

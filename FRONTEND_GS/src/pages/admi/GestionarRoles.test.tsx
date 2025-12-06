@@ -1,9 +1,13 @@
-import { describe, expect, test, vi, afterEach, beforeEach} from "vitest";
+import { describe, expect, test, vi, afterEach, beforeEach } from "vitest";
 import { screen, render, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import type { Mock } from "vitest";
 
 import RolesUsuario from "./GestionarRoles";
+
+// --- CONFIGURACIÓN DE URL ---
+// Cambia este valor por la URL de tu backend desplegado cuando lo subas.
+const API_BASE_URL = "https://generacion-back.vercel.app";
 
 // Mock para fetch
 const mockUsuarios = [
@@ -76,8 +80,9 @@ describe("<GestionarRoles />", () => {
     fireEvent.click(botonEditor);
 
     await waitFor(() => {
+      // AQUÍ USAMOS LA VARIABLE API_BASE_URL
       expect(fetch).toHaveBeenCalledWith(
-        "http://localhost:3000/api/v1/usuarios/1",
+        `${API_BASE_URL}/api/v1/usuarios/1`,
         expect.objectContaining({
           method: "PUT",
           body: JSON.stringify({ rol: "editor" }),
