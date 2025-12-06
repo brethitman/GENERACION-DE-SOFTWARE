@@ -8,7 +8,7 @@ import type { Topico } from "../../types/Topico";
 // --- CONFIGURACIÓN DE URL ---
 // Cambia este valor por la URL de tu backend desplegado cuando lo subas.
 // Ejemplo: "https://mi-api-backend.railway.app"
-const API_BASE_URL = "http://localhost:3000"; 
+const API_BASE_URL = "https://generacion-back.vercel.app"; 
 
 type Props = {
   isOpen: boolean;
