@@ -16,8 +16,8 @@ export class EmailService {
       port: parseInt(process.env.SMTP_PORT || '587'),
       secure: false,
       auth: {
-        user: "blancowinder167@gmail.com", // blancowinder167@gmail.com
-        pass: "uebm yenj eqha rpaj", // hzumdxmfvbaiskhn
+        user: process.env.SMTP_USER, // blancowinder167@gmail.com
+        pass: process.env.SMTP_PASS, // hzumdxmfvbaiskhn
       },
     });
   }
