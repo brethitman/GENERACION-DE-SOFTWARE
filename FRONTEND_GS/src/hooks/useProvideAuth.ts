@@ -10,7 +10,8 @@ import type { UsuarioPublico } from "../types/Usuario";
 
 // ✅ 1. CONFIGURACIÓN DE URL
 // Si existe la variable de entorno (Vercel), usa esa. Si no, usa localhost.
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// Forzamos la URL de producción para que no haya opción de ir a localhost
+const API_BASE_URL = "https://generacion-back.vercel.app";
 
 export function useProvideAuth() {
   const [estado, setEstado] = useState<EstadoAuth>({
