@@ -24,10 +24,7 @@ const app = express();
 // ========= C O N F I G U R A C I Ó N  G E N E R A L =========
 
 // CORS para permitir cookies (si el front las usa)
-app.use(cors({ 
-  origin: ["http://localhost:5173"], 
-  credentials: true 
-}));
+app.use(cors({ origin: "*", credentials: true }));
 
 app.use(express.json());
 app.use(morgan("dev"));
