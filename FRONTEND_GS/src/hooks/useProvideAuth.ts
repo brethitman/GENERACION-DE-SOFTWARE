@@ -8,9 +8,9 @@ import type {
 import api, { setAuthToken } from "../services/api";
 import type { UsuarioPublico } from "../types/Usuario";
 
-// --- CONFIGURACIÓN DE URL ---
-// Cambia este valor por la URL de tu backend desplegado cuando lo subas.
-const API_BASE_URL = "https://generacion-back.vercel.app"; 
+// ✅ 1. CONFIGURACIÓN DE URL
+// Si existe la variable de entorno (Vercel), usa esa. Si no, usa localhost.
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export function useProvideAuth() {
   const [estado, setEstado] = useState<EstadoAuth>({
@@ -56,11 +56,10 @@ export function useProvideAuth() {
     await api.post("/api/v1/autenticacion/reenviar-codigo", { usuarioId });
   };
 
-  // 🚀 GOOGLE LOGIN
+  // 🚀 GOOGLE LOGIN (CORREGIDO)
   const iniciarSesionConGoogle = useCallback(() => {
-    // Usamos la variable API_BASE_URL aquí
-    window.location.href =
-      `${API_BASE_URL}/api/v1/autenticacion/google`;
+    // 👇 AHORA USA LA VARIABLE DINÁMICA
+    window.location.href = `${API_BASE_URL}/api/v1/autenticacion/google`;
   }, []);
 
   // 🔄 CERRAR SESIÓN

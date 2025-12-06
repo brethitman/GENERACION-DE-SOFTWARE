@@ -9,7 +9,7 @@ const PUERTO = process.env.PORT || 3000;
 // Solo arrancamos el servidor manualmente si NO estamos en producción (modo local)
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PUERTO, () => {
-      console.log(`🚀 Servidor corriendo en http://localhost:${PUERTO}/api/v1/autenticacion/login`);
+      console.log(`Servidor corriendo`);
     });
 }
 
