@@ -16,7 +16,7 @@ async function callbackGoogle(req, res) {
     try {
         const user = req.user;
         if (!user?.email) {
-            const front = new URL("http://localhost:5173/");
+            const front = new URL("https://generacionfront.vercel.app/");
             front.searchParams.set("error", "google_auth_failed");
             res.redirect(front.toString());
             return;
@@ -38,7 +38,7 @@ async function callbackGoogle(req, res) {
             correo: usuario.correo,
         });
         // Redirige al front con token y datos
-        const urlFront = new URL("http://localhost:5173/login/");
+        const urlFront = new URL("https://generacionfront.vercel.app/login/");
         urlFront.searchParams.set("token", token);
         urlFront.searchParams.set("nombre", usuario.nombre);
         urlFront.searchParams.set("correo", usuario.correo);
@@ -46,7 +46,7 @@ async function callbackGoogle(req, res) {
     }
     catch (err) {
         console.error("[callbackGoogle] Error:", err);
-        const front = new URL("http://localhost:5173/");
+        const front = new URL("https://generacionfront.vercel.app/");
         front.searchParams.set("error", "google_auth_failed");
         res.redirect(front.toString());
     }

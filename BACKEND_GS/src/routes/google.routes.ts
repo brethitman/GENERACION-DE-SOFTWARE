@@ -45,7 +45,7 @@ router.get(
         }
         if (!user) {
           // Evita "Cannot GET /login"
-          const front = new URL("http://localhost:5173/");
+          const front = new URL("https://generacionfront.vercel.app/");
           front.searchParams.set("error", "google_auth_failed");
           res.redirect(front.toString());
           return;

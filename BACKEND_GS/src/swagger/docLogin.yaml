@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local
+  - url: https://generacionback.vercel.app
+    description: Producción
 tags:
   - name: Autenticación
     description: Endpoints de autenticación

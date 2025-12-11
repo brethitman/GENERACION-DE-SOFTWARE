@@ -18,7 +18,7 @@ import usuariosRoutes from "./routes/usuarios.routes";
 const app = express();
 
 // CORS (habilita cookies si luego las usas)
-app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
+app.use(cors({ origin: ["https://generacionfront.vercel.app"], credentials: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
