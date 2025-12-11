@@ -1,11 +1,14 @@
-// src/services/api.ts
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+// CAMBIO 1: Si no encuentra la variable de entorno, usa el BACKEND DEPLOYADO por defecto.
+// Así arreglamos el error de conexión si Vercel falla al leer el .env
+const baseURL = import.meta.env.VITE_API_URL || "https://generacionback.vercel.app";
 
 const api = axios.create({
   baseURL,
   headers: { "Content-Type": "application/json" },
+  // CAMBIO 2: Necesario porque tu backend tiene credentials: true
+  withCredentials: true,
   timeout: 10000,
 });
 

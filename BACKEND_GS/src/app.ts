@@ -17,8 +17,28 @@ import usuariosRoutes from "./routes/usuarios.routes";
 
 const app = express();
 
-// CORS (habilita cookies si luego las usas)
-app.use(cors({ origin: ["https://generacionfront.vercel.app"], credentials: true }));
+// ==========================================
+// ✅ CORS CORREGIDO (Sin 'any' y funcional)
+// ==========================================
+const allowedOrigins = [
+  "https://generacionfront.vercel.app", // Producción
+  "http://localhost:5173"               // Desarrollo local
+];
+
+// Configuración reutilizable
+const corsConfig = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+};
+
+// 1. Aplicar CORS general
+app.use(cors(corsConfig));
+
+// 2. 🔥 SOLUCIÓN AL ERROR ROJO: Habilitar explícitamente las peticiones OPTIONS (Preflight)
+app.options("*", cors(corsConfig));
+
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -28,6 +48,11 @@ app.use(
     secret: process.env.SESSION_SECRET as string,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      // En producción (Vercel) secure debe ser true, en local false.
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
+    }
   })
 );
 
