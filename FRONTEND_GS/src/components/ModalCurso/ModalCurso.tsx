@@ -29,7 +29,7 @@ export default function EditarCursoModal({
     setError(null);
 
   try {
-    const response = await fetch(`http://localhost:3000/api/v1/cursos/${id}`, {
+    const response = await fetch(`https://generacionback.vercel.app/api/v1/cursos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

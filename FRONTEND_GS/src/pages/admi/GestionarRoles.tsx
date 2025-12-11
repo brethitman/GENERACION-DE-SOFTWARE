@@ -23,7 +23,7 @@ export default function RolesUsuario() {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const respuesta = await fetch("http://localhost:3000/api/v1/usuarios");
+        const respuesta = await fetch("https://generacionback.vercel.app/api/v1/usuarios");
         const data = await respuesta.json();
         setUsuarios(data.usuarios || []);
       } catch (error) {
@@ -38,7 +38,7 @@ export default function RolesUsuario() {
   // 🔹 Función para actualizar el rol
   const actualizarRol = async (id: number, nuevoRol: string) => {
     try {
-      const respuesta = await fetch(`http://localhost:3000/api/v1/usuarios/${id}`, {
+      const respuesta = await fetch(`https://generacionback.vercel.app/api/v1/usuarios/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rol: nuevoRol }),

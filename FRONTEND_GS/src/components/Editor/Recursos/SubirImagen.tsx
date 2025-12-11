@@ -2,7 +2,7 @@ export async function SubirImagen(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch("http://localhost:3000/api/cloudinary/upload", {
+  const res = await fetch("https://generacionback.vercel.app/api/cloudinary/upload", {
     method: "POST",
     body: formData,
   });

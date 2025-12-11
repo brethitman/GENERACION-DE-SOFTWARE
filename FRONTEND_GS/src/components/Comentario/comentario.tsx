@@ -9,7 +9,7 @@ interface Comentario {
   respuestas: { autor: string; texto: string }[];
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://generacionback.vercel.app";
 
 export default function ComentariosPanel({ idTopico }: { idTopico: string }) {
   const { usuario } = useAuth();
